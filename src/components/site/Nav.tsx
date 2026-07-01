@@ -15,29 +15,31 @@ export function Nav() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  const light = !scrolled; // sitting over dark burgundy hero at top
+
   return (
     <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "backdrop-blur-md bg-cream/80 border-b border-border shadow-soft"
+          ? "backdrop-blur-md bg-cream/85 border-b border-border shadow-soft"
           : "bg-transparent"
       }`}
     >
       <div className="mx-auto max-w-7xl px-5 md:px-8 h-16 md:h-20 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 group">
-          <span className="relative inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-burgundy shadow-soft">
-            <span className="font-display text-primary-foreground text-lg leading-none">S</span>
+          <span className={`relative inline-flex items-center justify-center w-10 h-10 rounded-full shadow-soft ${light ? "bg-gold" : "bg-gradient-burgundy"}`}>
+            <span className={`font-display text-lg leading-none ${light ? "text-primary" : "text-primary-foreground"}`}>S</span>
             <span className="absolute inset-0 rounded-full border border-gold/40" />
           </span>
           <span className="flex flex-col leading-none">
-            <span className="font-display text-lg md:text-xl text-primary">{SITE.short}</span>
-            <span className="text-[10px] md:text-[11px] tracking-[0.28em] uppercase text-muted-foreground">
+            <span className={`font-display text-lg md:text-xl ${light ? "text-cream" : "text-primary"}`}>{SITE.short}</span>
+            <span className={`text-[10px] md:text-[11px] tracking-[0.28em] uppercase ${light ? "text-gold-soft/90" : "text-muted-foreground"}`}>
               Sweets & Savouries
             </span>
           </span>
@@ -48,8 +50,10 @@ export function Nav() {
             <Link
               key={l.to}
               to={l.to}
-              className="text-sm tracking-wide text-foreground/80 hover:text-primary transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold hover:after:w-full after:transition-all"
-              activeProps={{ className: "text-primary after:w-full" }}
+              className={`text-sm tracking-wide transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold hover:after:w-full after:transition-all ${
+                light ? "text-cream/85 hover:text-gold-soft" : "text-foreground/80 hover:text-primary"
+              }`}
+              activeProps={{ className: "after:w-full" }}
             >
               {l.label}
             </Link>
@@ -59,7 +63,11 @@ export function Nav() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             to="/menu"
-            className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-burgundy-deep transition-colors shadow-soft"
+            className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors shadow-soft ${
+              light
+                ? "bg-gold text-primary hover:bg-gold-soft"
+                : "bg-primary text-primary-foreground hover:bg-burgundy-deep"
+            }`}
           >
             Order Now
           </Link>
@@ -68,7 +76,7 @@ export function Nav() {
         <button
           onClick={() => setOpen((v) => !v)}
           aria-label="Menu"
-          className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full bg-secondary text-primary"
+          className={`md:hidden inline-flex items-center justify-center w-10 h-10 rounded-full ${light ? "bg-gold/20 text-cream border border-gold/40" : "bg-secondary text-primary"}`}
         >
           {open ? <X size={18} /> : <Menu size={18} />}
         </button>
@@ -86,8 +94,8 @@ export function Nav() {
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="py-3 text-base border-b border-border/60 last:border-0"
-              activeProps={{ className: "text-primary" }}
+              className="py-3 text-base border-b border-border/60 last:border-0 text-primary"
+              activeProps={{ className: "text-gold" }}
             >
               {l.label}
             </Link>
