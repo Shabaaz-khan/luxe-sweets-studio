@@ -13,6 +13,13 @@ export function Hero3D() {
   const rotX = useTransform(my, [-1, 1], [6, -6]);
   const tx = useTransform(mx, [-1, 1], [-14, 14]);
   const ty = useTransform(my, [-1, 1], [-10, 10]);
+  const card1X = useTransform(mx, [-1, 1], [-40, 40]);
+  const card1Y = useTransform(my, [-1, 1], [-30, 30]);
+  const card2X = useTransform(mx, [-1, 1], [40, -40]);
+  const card2Y = useTransform(my, [-1, 1], [30, -30]);
+  const badgeX = useTransform(mx, [-1, 1], [20, -20]);
+  const badgeY = useTransform(my, [-1, 1], [-20, 20]);
+
 
   useEffect(() => {
     const onMove = (e: MouseEvent) => {
