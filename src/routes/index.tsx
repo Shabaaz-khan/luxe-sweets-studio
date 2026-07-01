@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Hero3D } from "@/components/site/Hero3D";
+import { Marquee } from "@/components/site/Marquee";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProductCard } from "@/components/site/ProductCard";
 import { products, categories } from "@/lib/menu";
@@ -21,10 +22,12 @@ function Home() {
       <Nav />
       <main>
         <Hero3D />
+        <Marquee />
 
         {/* Values strip */}
-        <section className="border-y border-border bg-cream/60 backdrop-blur">
+        <section className="border-b border-border bg-cream/60 backdrop-blur">
           <div className="mx-auto max-w-7xl px-5 md:px-8 py-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+
             {[
               { Icon: Leaf, label: "Pure ghee, no palm oil" },
               { Icon: Sparkles, label: "Slow-cooked, hand shaped" },
