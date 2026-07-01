@@ -322,3 +322,48 @@
   }
 }
 
+/* Cinematic film grain overlay */
+@utility film-grain {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image:
+    radial-gradient(oklch(1 0 0 / 0.9) 1px, transparent 1.2px),
+    radial-gradient(oklch(0 0 0 / 0.9) 1px, transparent 1.2px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 2px;
+  animation: grain-shift 1.6s steps(6) infinite;
+}
+@keyframes grain-shift {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-2%, 1%); }
+  40%  { transform: translate(1%, -2%); }
+  60%  { transform: translate(-1%, 2%); }
+  80%  { transform: translate(2%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Cinematic vignette */
+@utility vignette {
+  background: radial-gradient(ellipse at center,
+    transparent 55%,
+    oklch(0.22 0.09 18 / 0.28) 100%);
+}
+
+/* Kenburns slow zoom */
+@keyframes kenburns {
+  0%   { transform: scale(1) translate3d(0,0,0); }
+  100% { transform: scale(1.12) translate3d(-1.5%, -1%, 0); }
+}
+@utility animate-kenburns {
+  animation: kenburns 18s ease-in-out infinite alternate;
+}
+
+/* Soft glow pulse */
+@keyframes soft-glow {
+  0%, 100% { box-shadow: 0 0 0 0 oklch(0.72 0.14 72 / 0.35); }
+  50%      { box-shadow: 0 0 60px 10px oklch(0.72 0.14 72 / 0.15); }
+}
+@utility animate-soft-glow {
+  animation: soft-glow 4s ease-in-out infinite;
+}
+
