@@ -128,7 +128,7 @@ export function Hero3D() {
 
             {/* Floating card 1 */}
             <motion.div
-              style={{ x: useTransform(mx, [-1, 1], [-40, 40]), y: useTransform(my, [-1, 1], [-30, 30]) }}
+              style={{ x: card1X, y: card1Y }}
               className="absolute -left-2 top-6 md:top-10 w-40 md:w-48 rounded-2xl overflow-hidden shadow-luxe rotate-[-8deg] animate-float-slow border border-cream"
             >
               <img src={sweet2} alt="Rose gulab jamun" loading="lazy" className="w-full h-40 md:h-48 object-cover" width={800} height={800} />
@@ -140,7 +140,7 @@ export function Hero3D() {
 
             {/* Floating card 2 */}
             <motion.div
-              style={{ x: useTransform(mx, [-1, 1], [40, -40]), y: useTransform(my, [-1, 1], [30, -30]) }}
+              style={{ x: card2X, y: card2Y }}
               className="absolute right-0 bottom-6 md:bottom-10 w-40 md:w-52 rounded-2xl overflow-hidden shadow-luxe rotate-[7deg] animate-float-med border border-cream"
             >
               <img src={savoury} alt="Traditional namkeen mix" loading="lazy" className="w-full h-40 md:h-48 object-cover" width={800} height={800} />
@@ -152,7 +152,7 @@ export function Hero3D() {
 
             {/* Gold badge */}
             <motion.div
-              style={{ x: useTransform(mx, [-1, 1], [20, -20]), y: useTransform(my, [-1, 1], [-20, 20]) }}
+              style={{ x: badgeX, y: badgeY }}
               className="absolute -right-3 md:right-6 top-2 w-24 h-24 md:w-28 md:h-28 rounded-full bg-gradient-gold text-primary grid place-items-center rotate-12 shadow-luxe"
             >
               <div className="text-center leading-tight">
