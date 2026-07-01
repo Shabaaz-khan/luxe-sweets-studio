@@ -21,6 +21,7 @@ import "@fontsource/great-vibes/400.css";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { SmoothScroll } from "@/components/site/SmoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -137,7 +138,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SmoothScroll />
       <Outlet />
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[60] film-grain" />
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-[59] vignette" />
       <Toaster position="top-center" richColors closeButton />
     </QueryClientProvider>
   );
