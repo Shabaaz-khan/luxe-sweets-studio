@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { API_URL } from "@/lib/config";
 import { motion, AnimatePresence } from "framer-motion";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
+import { useCart } from "@/context/CartContext";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProductCard } from "@/components/site/ProductCard";
-import { categories, products, type Product } from "@/lib/menu";
+import { getCategories, getProducts, getTypes } from "@/api/api";
+import { useEffect, useMemo, useState } from "react";
 import { SITE } from "@/lib/site";
 import { ShoppingBag, Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
@@ -29,47 +31,82 @@ export const Route = createFileRoute("/menu")({
   component: MenuPage,
 });
 
-type Filter = "all" | (typeof categories)[number]["id"];
+type Filter = string;
+type Category = {
+  _id: string;
+  name: string;
+};
 
+type Product = {
+  _id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  variants: {
+    weight: string;
+    price: number;
+  }[];
+  category: {
+    _id: string;
+    name: string;
+  };
+};
 function MenuPage() {
-  const [filter, setFilter] = useState<Filter>("all");
-  const [cart, setCart] = useState<Record<string, number>>({});
-  const [open, setOpen] = useState(false);
 
-  const list = useMemo(
-    () => (filter === "all" ? products : products.filter((p) => p.category === filter)),
-    [filter],
-  );
+const [filter, setFilter] = useState("all");
 
-  const cartItems = useMemo(
-    () =>
-      Object.entries(cart)
-        .map(([id, qty]) => ({ product: products.find((p) => p.id === id)!, qty }))
-        .filter((i) => i.product && i.qty > 0),
-    [cart],
-  );
-  const subtotal = cartItems.reduce((s, i) => s + i.product.price * i.qty, 0);
+const [categories, setCategories] = useState<Category[]>([]);
+const [types, setTypes] = useState([]);
+const [products, setProducts] = useState<Product[]>([]);  
 
-  const addToCart = (p: Product) => {
-    setCart((c) => ({ ...c, [p.id]: (c[p.id] || 0) + 1 }));
-    toast.success(`Added ${p.name}`, { description: `${SITE.currency}${p.price} · ${p.unit}` });
+
+const {
+  cartItems,
+  subtotal,
+  addToCart,
+  setQty,
+  changeVariant,
+  checkout,
+  open,
+  setOpen,
+} = useCart();
+  // const [open, setOpen] = useState(false);
+
+useEffect(() => {
+  const loadData = async () => {
+    try {
+      const [cats, products, types] = await Promise.all([
+        getCategories(),
+        getProducts(),
+        getTypes(),
+      ]);
+
+      setCategories(cats);
+      setProducts(products);
+      setTypes(types);
+
+      console.log("Categories :", cats);
+      console.log("Types :", types);
+      console.log("Products :", products);
+    } catch (err) {
+      console.error(err);
+    }
   };
-  const setQty = (id: string, qty: number) => {
-    setCart((c) => {
-      const next = { ...c };
-      if (qty <= 0) delete next[id];
-      else next[id] = qty;
-      return next;
-    });
-  };
 
-  const checkout = () => {
-    if (cartItems.length === 0) return;
-    toast.info("Checkout coming online shortly", {
-      description:
-        "Secure card payments are being connected. Your order has been saved — we'll message you.",
-    });
-  };
+  loadData();
+}, []);
+const list = useMemo(() => {
+
+    if (filter === "all")
+        return products;
+
+    return products.filter(
+        p => p.category?._id === filter
+    );
+
+}, [filter, products]);
+
+
 
   return (
     <div className="min-h-screen">
@@ -84,7 +121,7 @@ function MenuPage() {
 
           {/* Filter chips */}
           <div className="mt-10 flex flex-wrap items-center gap-3">
-            {(["all", ...categories.map((c) => c.id)] as Filter[]).map((f) => (
+            {(["all", ...categories.map(c => c._id)] as Filter[]).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
@@ -94,7 +131,7 @@ function MenuPage() {
                     : "bg-transparent text-primary border-primary/25 hover:bg-primary/5"
                 }`}
               >
-                {f === "all" ? "Everything" : categories.find((c) => c.id === f)?.label}
+                {f === "all" ? "Everything" : categories.find(c => c._id === f)?.name}
               </button>
             ))}
             <div className="ml-auto">
@@ -111,82 +148,22 @@ function MenuPage() {
           {/* Grid */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {list.map((p) => (
-              <ProductCard key={p.id} p={p} onOrder={addToCart} />
+              <ProductCard key={p._id} p={p} onOrder={addToCart} />
             ))}
           </div>
         </section>
       </main>
 
       {/* Cart drawer */}
-      <AnimatePresence>
-        {open && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-burgundy-deep/50 backdrop-blur-sm"
-            />
-            <motion.aside
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-              className="fixed right-0 top-0 bottom-0 z-[70] w-full sm:max-w-md bg-cream flex flex-col shadow-luxe"
-            >
-              <header className="flex items-center justify-between p-6 border-b border-border">
-                <div className="font-display text-2xl text-primary">Your order</div>
-                <button onClick={() => setOpen(false)} className="p-2 rounded-full hover:bg-secondary">
-                  <X size={18} />
-                </button>
-              </header>
-
-              <div className="flex-1 overflow-y-auto p-6 space-y-4">
-                {cartItems.length === 0 && (
-                  <div className="text-sm text-muted-foreground">Your order is empty. Add a signature to begin.</div>
-                )}
-                {cartItems.map((i) => (
-                  <div key={i.product.id} className="flex gap-4 rounded-xl bg-card border border-border p-3">
-                    <img src={i.product.image} alt="" className="w-16 h-16 object-cover rounded-lg" />
-                    <div className="flex-1">
-                      <div className="font-display text-lg text-primary leading-tight">{i.product.name}</div>
-                      <div className="text-xs text-muted-foreground">{SITE.currency}{i.product.price} · {i.product.unit}</div>
-                      <div className="mt-2 inline-flex items-center gap-1 rounded-full border border-border">
-                        <button onClick={() => setQty(i.product.id, i.qty - 1)} className="p-1.5"><Minus size={14} /></button>
-                        <span className="min-w-6 text-center text-sm">{i.qty}</span>
-                        <button onClick={() => setQty(i.product.id, i.qty + 1)} className="p-1.5"><Plus size={14} /></button>
-                      </div>
-                    </div>
-                    <div className="font-display text-primary">{SITE.currency}{i.product.price * i.qty}</div>
-                  </div>
-                ))}
-              </div>
-
-              <footer className="p-6 border-t border-border space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-medium">{SITE.currency}{subtotal}</span>
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Shipping & taxes</span>
-                  <span>Calculated at checkout</span>
-                </div>
-                <button
-                  onClick={checkout}
-                  disabled={cartItems.length === 0}
-                  className="w-full rounded-full bg-primary text-primary-foreground py-3.5 text-sm font-medium hover:bg-burgundy-deep transition-colors disabled:opacity-50 shadow-soft"
-                >
-                  Secure checkout →
-                </button>
-                <p className="text-[11px] text-muted-foreground text-center">
-                  Card, UPI and net-banking accepted at checkout.
-                </p>
-              </footer>
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+{/* <CartDrawer
+  open={open}
+  setOpen={setOpen}
+  cartItems={cartItems}
+  subtotal={subtotal}
+  setQty={setQty}
+  changeVariant={changeVariant}
+  checkout={checkout}
+/> */}
 
       <Footer />
     </div>

@@ -6,7 +6,7 @@ import { Menu, X } from "lucide-react";
 const links = [
   { to: "/", label: "Home" },
   { to: "/menu", label: "Menu" },
-  { to: "/corporate", label: "Corporate" },
+  { to: "/corporate", label: "Orders" },
   { to: "/about", label: "Our Story" },
 ];
 
@@ -38,8 +38,8 @@ export function Nav() {
             <span className="absolute inset-0 rounded-full border border-gold/40" />
           </span>
           <span className="flex flex-col leading-none">
-            <span className={`font-display text-lg md:text-xl ${light ? "text-cream" : "text-primary"}`}>{SITE.short}</span>
-            <span className={`text-[10px] md:text-[11px] tracking-[0.28em] uppercase ${light ? "text-gold-soft/90" : "text-muted-foreground"}`}>
+            <span className={`font-display text-lg md:text-xl ${ "text-primary"}`}>{SITE.short}</span>
+            <span className={`text-[10px] md:text-[11px] tracking-[0.28em] uppercase ${"text-muted-foreground"}`}>
               Sweets & Savouries
             </span>
           </span>
@@ -51,7 +51,7 @@ export function Nav() {
               key={l.to}
               to={l.to}
               className={`text-sm tracking-wide transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-gold hover:after:w-full after:transition-all ${
-                light ? "text-cream/85 hover:text-gold-soft" : "text-foreground/80 hover:text-primary"
+                 "text-foreground/80 hover:text-primary"
               }`}
               activeProps={{ className: "after:w-full" }}
             >
@@ -64,9 +64,8 @@ export function Nav() {
           <Link
             to="/menu"
             className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors shadow-soft ${
-              light
-                ? "bg-gold text-primary hover:bg-gold-soft"
-                : "bg-primary text-primary-foreground hover:bg-burgundy-deep"
+
+                 "bg-primary text-primary-foreground hover:bg-burgundy-deep"
             }`}
           >
             Order Now

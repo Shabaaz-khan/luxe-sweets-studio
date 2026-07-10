@@ -7,8 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { CartProvider, useCart } from "@/context/CartContext";
 import { useEffect, type ReactNode } from "react";
-
+import CartDrawer from "@/components/site/CartDrawer";
 import "@fontsource/cormorant-garamond/400.css";
 import "@fontsource/cormorant-garamond/500.css";
 import "@fontsource/cormorant-garamond/600.css";
@@ -138,11 +139,40 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SmoothScroll />
-      <Outlet />
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-[60] film-grain" />
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-[59] vignette" />
-      <Toaster position="top-center" richColors closeButton />
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
     </QueryClientProvider>
+  );
+}
+function AppContent() {
+  const {
+    open,
+    setOpen,
+    cartItems,
+    subtotal,
+    setQty,
+    changeVariant,
+    checkout,
+  } = useCart();
+
+  return (
+    <>
+      {/* <SmoothScroll /> */}
+
+      <Outlet />
+
+      <CartDrawer
+        open={open}
+        setOpen={setOpen}
+        cartItems={cartItems}
+        subtotal={subtotal}
+        setQty={setQty}
+        changeVariant={changeVariant}
+        checkout={checkout}
+      />
+
+      <Toaster position="top-center" richColors closeButton />
+    </>
   );
 }

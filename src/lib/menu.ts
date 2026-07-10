@@ -2,14 +2,16 @@ import hero from "@/assets/hero-sweets.jpg";
 import sweet2 from "@/assets/sweet-2.jpg";
 import savoury1 from "@/assets/savoury-1.jpg";
 import corporate from "@/assets/corporate-gift.jpg";
-
+import type{product} from "@/lib/menu";
 export type Product = {
   id: string;
   name: string;
   hindi?: string;
   category: "sweets" | "savouries" | "gifting";
-  price: number; // per 250g or per box
-  unit: string;
+ variants: {
+  weight: string;
+  price: number;
+}[];
   image: string;
   desc: string;
   featured?: boolean;
