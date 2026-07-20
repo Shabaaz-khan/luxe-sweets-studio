@@ -6,13 +6,19 @@ import { Footer } from "@/components/site/Footer";
 import { useCart } from "@/context/CartContext";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProductCard } from "@/components/site/ProductCard";
-import { getCategories, getProducts, getTypes } from "@/api/api";
+import { getCategories, getProducts, getTypes, getMenuPage, } from "@/api/api";
 import { useEffect, useMemo, useState } from "react";
 import { SITE } from "@/lib/site";
 import { ShoppingBag, Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
-
 export const Route = createFileRoute("/menu")({
+validateSearch: (search: Record<string, unknown>) => ({
+  category:
+    typeof search.category === "string"
+      ? search.category
+      : "all",
+}),
+
   head: () => ({
     meta: [
       { title: "The Menu — Saatvik Sweets & Savouries" },
@@ -28,7 +34,7 @@ export const Route = createFileRoute("/menu")({
       },
     ],
   }),
-  component: MenuPage,
+component: MenuPage,
 });
 
 type Filter = string;
@@ -52,14 +58,13 @@ type Product = {
   };
 };
 function MenuPage() {
+const { category } = Route.useSearch();
 
-const [filter, setFilter] = useState("all");
-
+const [filter, setFilter] = useState(category ?? "all");
 const [categories, setCategories] = useState<Category[]>([]);
 const [types, setTypes] = useState([]);
 const [products, setProducts] = useState<Product[]>([]);  
-
-
+const [menuPage, setMenuPage] = useState<any>(null);
 const {
   cartItems,
   subtotal,
@@ -75,16 +80,17 @@ const {
 useEffect(() => {
   const loadData = async () => {
     try {
-      const [cats, products, types] = await Promise.all([
+      const [cats, products, types,menu] = await Promise.all([
         getCategories(),
         getProducts(),
         getTypes(),
+          getMenuPage(),
       ]);
 
       setCategories(cats);
       setProducts(products);
       setTypes(types);
-
+setMenuPage(menu);
       console.log("Categories :", cats);
       console.log("Types :", types);
       console.log("Products :", products);
@@ -95,29 +101,45 @@ useEffect(() => {
 
   loadData();
 }, []);
+useEffect(() => {
+  if (category) {
+    setFilter(category);
+  }
+}, [category]);
 const list = useMemo(() => {
 
-    if (filter === "all")
-        return products;
+  if (!menuPage) return [];
 
-    return products.filter(
-        p => p.category?._id === filter
+  if (filter === "all") {
+
+    return products.filter((product) =>
+
+      menuPage.firstTabProducts?.some(
+        (selected: any) => selected._id === product._id
+      )
+
     );
 
-}, [filter, products]);
+  }
 
+  return products.filter(
+    (p) => p.category?._id === filter
+  );
 
+}, [filter, products, menuPage]);
+
+if (!menuPage) return null;
 
   return (
     <div className="min-h-screen">
       <Nav />
       <main className="pt-28 md:pt-36">
         <section className="mx-auto max-w-7xl px-5 md:px-8">
-          <SectionHeading
-            eyebrow="The Menu"
-            title="Every counter, every craft."
-            subtitle="Prices per portion. Items are packed the day of dispatch to preserve freshness."
-          />
+<SectionHeading
+  eyebrow={menuPage.eyebrow}
+  title={menuPage.title}
+  subtitle={menuPage.subtitle}
+/>
 
           {/* Filter chips */}
           <div className="mt-10 flex flex-wrap items-center gap-3">
@@ -131,10 +153,12 @@ const list = useMemo(() => {
                     : "bg-transparent text-primary border-primary/25 hover:bg-primary/5"
                 }`}
               >
-                {f === "all" ? "Everything" : categories.find(c => c._id === f)?.name}
-              </button>
+{f === "all"
+  ? menuPage.allTabName
+  : categories.find(c => c._id === f)?.name}    
+            </button>
             ))}
-            <div className="ml-auto">
+            {/* <div className="ml-auto">
               <button
                 onClick={() => setOpen(true)}
                 className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm shadow-soft"
@@ -142,7 +166,7 @@ const list = useMemo(() => {
                 <ShoppingBag size={16} />
                 Cart · {cartItems.reduce((s, i) => s + i.qty, 0)}
               </button>
-            </div>
+            </div> */}
           </div>
 
           {/* Grid */}

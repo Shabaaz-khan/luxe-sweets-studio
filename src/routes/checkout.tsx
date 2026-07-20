@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 
@@ -27,7 +26,13 @@ function CheckoutPage() {
     pincode: "",
     saveAddress: false,
   });
+useEffect(() => {
+  const savedAddress = sessionStorage.getItem("checkout-address");
 
+  if (savedAddress) {
+    setAddress(JSON.parse(savedAddress));
+  }
+}, []);
   return (
     <div className="min-h-screen bg-background">
 

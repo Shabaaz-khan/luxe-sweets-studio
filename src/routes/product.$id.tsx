@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { getProduct } from "@/api/api";
-import { API_URL } from "@/lib/config";
 import { useCart } from "@/context/CartContext";
 export const Route = createFileRoute("/product/$id")({
   component: ProductDetails,
@@ -48,6 +47,12 @@ const handleAddToCart = () => {
 
   addToCart(product, selectedVariant, qty);
 };
+const cheapestVariant =
+  product?.variants?.length
+    ? product.variants.reduce((min: any, current: any) =>
+        current.price < min.price ? current : min
+      )
+    : null;
   return (
     <div className="min-h-screen bg-background">
 
@@ -60,7 +65,7 @@ const handleAddToCart = () => {
   <div>
 
     <img
-      src={`${API_URL}${product.imageUrl}`}
+      src={product.imageUrl}
       alt={product.name}
  className="w-[420px] h-[420px] object-cover rounded-3xl shadow-xl mx-auto"    />
 
@@ -81,13 +86,13 @@ const handleAddToCart = () => {
 
   <div className="text-4xl font-display text-primary mt-1">
 
-    ₹{product.variants?.[0]?.price}
+    ₹{cheapestVariant?.price}
 
   </div>
 
   <div className="text-sm text-muted-foreground">
 
-    {product.variants?.[0]?.weight}
+    {cheapestVariant?.weight}
 
   </div>
 
@@ -96,78 +101,40 @@ const handleAddToCart = () => {
       {product.description}
     </p>
 <div className="mt-10">
-
   <h3 className="text-lg font-semibold text-primary mb-4">
-    Choose Weight
+    Select Size
   </h3>
 
-  <div className="space-y-3">
-
-    {product.variants?.map((variant:any)=>{
-
-      const active =
-        selectedVariant?.weight === variant.weight;
+  <div className="flex flex-wrap gap-4">
+    {product.variants?.map((variant: any) => {
+      const active = selectedVariant?.weight === variant.weight;
 
       return (
-
         <button
           key={variant.weight}
-          onClick={()=>setSelectedVariant(variant)}
-          className={`w-full rounded-2xl border p-5 transition-all duration-300 flex justify-between items-center
-
-          ${
+          type="button"
+          onClick={() => setSelectedVariant(variant)}
+          className={`min-w-[95px] rounded-2xl px-5 py-4 text-center transition-all duration-300 ${
             active
-            ? "border-primary bg-primary/5 shadow-lg"
-            : "border-border hover:border-primary/40"
+              ? "bg-primary text-white shadow-lg"
+              : "bg-secondary hover:bg-secondary/80 text-primary"
           }`}
         >
-
-          <div className="flex items-center gap-4">
-
-            <div
-              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
-
-              ${
-                active
-                ? "border-primary"
-                : "border-gray-400"
-              }`}
-            >
-
-              {active && (
-
-                <div className="w-2.5 h-2.5 rounded-full bg-primary"/>
-
-              )}
-
-            </div>
-
-            <div>
-
-              <p className="font-medium">
-
-                {variant.weight}
-
-              </p>
-
-            </div>
-
+          <div className="font-semibold text-base">
+            {variant.weight}
           </div>
 
-          <div className="font-display text-xl text-primary">
-
+          <div
+            className={`mt-1 text-sm ${
+              active ? "text-white/90" : "text-muted-foreground"
+            }`}
+          >
             ₹{variant.price}
-
           </div>
-
         </button>
-
       );
-
     })}
-
   </div>
-
 </div>
 <div className="mt-8">
 

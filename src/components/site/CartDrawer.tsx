@@ -84,9 +84,9 @@ export default function CartDrawer({
                 >
                   {/* Product */}
                   <div className="flex gap-4">
-                    <img
-                      src={`${API_URL}${i.product.imageUrl}`}
-                      alt={i.product.name}
+                  <img
+  src={i.product.imageUrl}
+  alt={i.product.name}
                       className="w-20 h-20 rounded-lg object-cover"
                     />
 
@@ -108,48 +108,51 @@ export default function CartDrawer({
                   </div>
 
                   {/* Weight Selection */}
-                  <div className="mt-4 border-t border-border pt-4">
-                    <p className="text-sm font-semibold text-primary mb-3">
-                      Choose Weight
-                    </p>
+<div className="mt-6">
+  <h3 className="text-sm font-semibold mb-3">
+    Select Size
+  </h3>
 
-                    <div className="space-y-2">
-                      {i.product.variants.map((variant) => (
-                        <label
-                          key={variant.weight}
-                          className={`flex items-center justify-between rounded-lg border p-3 cursor-pointer transition ${
-                            i.selectedVariant.weight === variant.weight
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-3">
-                            <input
-                              type="radio"
-                              checked={
-                                i.selectedVariant.weight === variant.weight
-                              }
-                              onChange={() =>
-                                changeVariant(
-                                  i.product._id,
-                                  variant.weight
-                                )
-                              }
-                            />
+  <div className="flex flex-wrap gap-3">
+    {i.product.variants.map((variant) => {
+      const active =
+        i.selectedVariant.weight === variant.weight;
 
-                            <span className="font-medium">
-                              {variant.weight}
-                            </span>
-                          </div>
+      return (
+        <button
+          key={variant.weight}
+          type="button"
+          onClick={() =>
+            changeVariant(
+              i.product._id,
+              variant.weight
+            )
+          }
+          className={`rounded-2xl px-5 py-4 min-w-[90px] transition-all duration-200 ${
+            active
+              ? "bg-primary text-white shadow-lg"
+              : "bg-stone-100 hover:bg-stone-200 text-stone-700"
+          }`}
+        >
+          <div className="font-semibold text-base">
+            {variant.weight} /            {SITE.currency}
+            {variant.price}
+          </div>
 
-                          <span className="font-semibold text-primary">
-                            {SITE.currency}
-                            {variant.price}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+          {/* <div
+            className={`text-sm mt-1 ${
+              active
+                ? "text-white/90"
+                : "text-stone-500"
+            }`}
+          >
+
+          </div> */}
+        </button>
+      );
+    })}
+  </div>
+</div>
 
                   {/* Quantity */}
                   <div className="mt-5 flex items-center justify-between border-t border-border pt-4">

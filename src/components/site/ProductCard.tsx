@@ -1,10 +1,9 @@
 import type { Product } from "@/lib/menu";
 import { SITE } from "@/lib/site";
 import { useNavigate } from "@tanstack/react-router";
-import { API_URL } from "@/lib/config";
 import { motion, useMotionValue, useTransform } from "framer-motion";
 import type { MouseEvent } from "react";
-
+import { toast } from "sonner";
 export function ProductCard({
   p,
   onOrder,
@@ -30,7 +29,12 @@ export function ProductCard({
     mx.set(0);
     my.set(0);
   };
-
+const cheapestVariant =
+  p.variants && p.variants.length
+    ? p.variants.reduce((min, current) =>
+        current.price < min.price ? current : min
+      )
+    : null;
   return (
     <motion.article
      onClick={() => navigate({ to: "/product/$id", params: { id: p._id } })}
@@ -47,14 +51,7 @@ export function ProductCard({
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-gold/0 via-gold/0 to-gold/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
       <div className="relative aspect-[4/3] overflow-hidden [transform:translateZ(30px)]">
- <img
-  src={`${API_URL}${p.imageUrl}`}
-  alt={p.name}
-          loading="lazy"
-          width={800}
-          height={600}
-          className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
-        />
+ <img src={p.imageUrl} alt={p.name} loading="lazy" width={800} height={600} className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-110" />
         <div className="absolute inset-0 bg-gradient-to-t from-burgundy-deep/60 via-transparent to-transparent" />
         {p.featured && (
           <span className="absolute top-3 left-3 rounded-full bg-gold text-primary text-[10px] tracking-[0.22em] uppercase px-3 py-1 shadow-soft">
@@ -68,8 +65,17 @@ export function ProductCard({
   </div> */}
 
   <div className="font-display text-lg text-primary">
-    {SITE.currency}{p.variants?.[0]?.price} / {p.variants?.[0]?.weight}
-  </div>
+{cheapestVariant && (
+  <>
+
+
+    <div className="font-display text-lg text-primary">
+     
+      {SITE.currency} {cheapestVariant.price} /  {cheapestVariant.weight}
+    </div>
+
+  </>
+)}  </div>
 
   {/* <div className="text-xs text-muted-foreground">
    
@@ -87,11 +93,17 @@ export function ProductCard({
 
     if (!p.variants?.length) return;
 
-    onOrder?.(
-      p,
-      p.variants[0],
-      1
-    );
+  if (!cheapestVariant) return;
+
+onOrder?.(
+  p,
+  cheapestVariant,
+  1
+);
+
+toast.success(`${p.name} added to cart`, {
+  description: `${cheapestVariant.weight} • ${SITE.currency}${cheapestVariant.price}`,
+});
   }}
 
           className="mt-5 w-full inline-flex items-center justify-center gap-2 rounded-full border border-primary/30 py-2.5 text-sm text-primary hover:bg-primary hover:text-primary-foreground transition-colors"

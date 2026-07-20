@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { useCart } from "@/context/CartContext";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { Hero3D } from "@/components/site/Hero3D";
@@ -8,16 +9,21 @@ import { Marquee } from "@/components/site/Marquee";
 import { SectionHeading } from "@/components/site/SectionHeading";
 import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal, RevealStagger, revealItem } from "@/components/site/Reveal";
-import { products, categories } from "@/lib/menu";
-import corporateImg from "@/assets/corporate-gift.jpg";
-import heroPlate from "@/assets/hero-plate.jpg";
+import { useEffect, useState } from "react";
+import { getCategories, getProducts,  getHomePage,} from "@/api/api";
+// import corporateImg from "@/assets/corporate-gift.jpg";
+// import heroPlate from "@/assets/hero-plate.jpg";
 import { Sparkles, Leaf, Award, Truck } from "lucide-react";
-
 export const Route = createFileRoute("/")({
   component: Home,
 });
 
-function CinematicStory() {
+function CinematicStory({
+  story,
+}: {
+  story: any;
+}) {
+  if (!story) return null;
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -34,7 +40,7 @@ function CinematicStory() {
     >
       <motion.div style={{ y, scale }} className="absolute inset-0">
         <img
-          src={heroPlate}
+          src={story.image}
           alt=""
           aria-hidden
           className="w-full h-full object-cover opacity-40"
@@ -48,26 +54,23 @@ function CinematicStory() {
       >
         <div className="max-w-3xl text-center">
           <div className="ornament inline-block text-[11px] tracking-[0.4em] uppercase text-gold" >
-            Our story
+           {story.label}
           </div>
           <h2 className="mt-8 font-display italic text-5xl md:text-7xl leading-[1.05] text-cream">
-            Six decades of{" "}
+            {story.title}
             <span className="shimmer-gold">slow craft</span>,
             <br />
             served with intention.
           </h2>
           <p className="mt-8 text-lg md:text-xl text-cream/70 leading-relaxed max-w-2xl mx-auto">
-            From a single copper vessel in a Mumbai bylane to boxes travelling
-            across six continents — every kaju katli, every ladoo, every chakli
-            still leaves our kitchen the way it did in 1962. By hand. With
-            ghee. With time.
+            {story.description}
           </p>
           <div className="mt-10 flex justify-center gap-4 flex-wrap">
             <Link
-              to="/about"
+                to={story.buttonLink}
               className="rounded-full border border-gold/60 px-7 py-3 text-sm tracking-widest uppercase text-cream hover:bg-gold/10 transition-colors"
             >
-              The Saatvik way
+               {story.buttonText}
             </Link>
           </div>
         </div>
@@ -77,14 +80,84 @@ function CinematicStory() {
 }
 
 function Home() {
-  const featured = products.filter((p) => p.featured);
+const [categories, setCategories] = useState<any[]>([]);
+const [products, setProducts] = useState<any[]>([]);
+const { addToCart } = useCart();
+const [home, setHome] = useState<any>(null);
+useEffect(() => {
+  loadHome();
+  loadCategories();
+  
+  loadProducts();
+}, []);
+// const loadSignatureProducts = async () => {
+//   try {
+//     const categories = await getCategories();
 
+//     const signatureCategory = categories.find(
+//       (c: any) =>
+//         c.name.toLowerCase() === "signature selection"
+//     );
+
+//     if (!signatureCategory) return;
+
+//     const products = await getProducts();
+
+//     const signatureProducts = products.filter(
+//       (p: any) =>
+//         p.category?._id === signatureCategory._id
+//     );
+
+//     setFeatured(signatureProducts);
+
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+const loadCategories = async () => {
+  try {
+    const data = await getCategories();
+
+    console.log("API DATA:", data);
+    console.log("Length:", data.length);
+
+    setCategories(data);
+
+  } catch (err) {
+    console.log(err);
+  }
+};
+const loadProducts = async () => {
+  try {
+    const data = await getProducts();
+    setProducts(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const loadHome = async () => {
+  try {
+    const data = await getHomePage();
+    setHome(data);
+  } catch (err) {
+    console.log(err);
+  }
+};
+if (!home) return null;
+const featured = home.signature?.category
+  ? products
+      .filter(
+        (p) =>
+          p.category?._id === home.signature.category
+      )
+      .slice(0, home.signature.limit)
+  : [];
   return (
     <div className="min-h-screen">
       <Nav />
       <main>
-        <Hero3D />
-        <Marquee />
+       <Hero3D hero={home.hero} />
+        <Marquee items={home.marquee.items} />
 
         {/* Values strip */}
         <section className="border-b border-border bg-cream/60 backdrop-blur">
@@ -110,7 +183,7 @@ function Home() {
         </section>
 
         {/* Cinematic story */}
-        <CinematicStory />
+       <CinematicStory story={home.story} />
 
         {/* Categories */}
         <section className="mx-auto max-w-7xl px-5 md:px-8 py-28">
@@ -123,32 +196,50 @@ function Home() {
           </Reveal>
 
           <RevealStagger stagger={0.15} className="mt-14 grid gap-6 md:grid-cols-3">
-            {categories.map((c, i) => (
-              <motion.div
-                key={c.id}
-                variants={revealItem}
-                className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 min-h-[280px] flex flex-col justify-between shadow-soft tilt-3d tilt-3d-hover"
-              >
-                <div className="absolute -right-10 -top-10 w-40 h-40 rounded-full bg-gradient-gold opacity-20 blur-2xl" />
-                <div>
-                  <div className="text-[11px] tracking-[0.3em] uppercase text-gold">
-                    0{i + 1}
-                  </div>
-                  <h3 className="mt-3 font-display text-4xl text-primary">
-                    {c.label}
-                  </h3>
-                  <p className="mt-2 text-foreground/70">{c.note}</p>
-                </div>
-                <Link
-                  to="/menu"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-primary group"
-                >
-                  Discover
-                  <span className="transition-transform group-hover:translate-x-1">
-                    →
-                  </span>
-                </Link>
-              </motion.div>
+            {categories.map((c: any, i: number) => (
+<motion.div
+  key={c._id}
+  variants={revealItem}
+  className="relative overflow-hidden rounded-3xl h-[350px] shadow-soft group"
+>
+    <Link
+    to="/menu"
+      search={{ category: c._id }}
+    className="relative block overflow-hidden rounded-3xl h-[350px] shadow-soft group"
+  >
+  {/* Background Image */}
+  <img
+    src={c.imageUrl}
+    alt={c.name}
+    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+  />
+
+  {/* Dark Overlay */}
+  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/45 transition-all duration-300" />
+
+  {/* Content */}
+ <div className="relative z-10 h-full flex flex-col justify-end p-8 text-white opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+    <div className="text-xs tracking-[0.3em] uppercase text-yellow-300">
+      0{i + 1}
+    </div>
+
+    <h3 className="mt-2 font-display text-4xl">
+      {c.name}
+    </h3>
+
+    <p className="mt-2 text-white/80 line-clamp-2">
+      {c.description}
+    </p>
+
+<div className="mt-6 inline-flex items-center gap-2 font-medium">
+  Discover
+  <span className="group-hover:translate-x-1 transition-transform">
+    →
+  </span>
+</div>
+  </div>
+   </Link>
+</motion.div>
             ))}
           </RevealStagger>
         </section>
@@ -157,11 +248,11 @@ function Home() {
         <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
           <Reveal>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-              <SectionHeading
-                eyebrow="Signature selection"
-                title="The house favourites."
-                subtitle="A tasting-order of what regulars keep coming back for."
-              />
+<SectionHeading
+  eyebrow={home.signature.eyebrow}
+  title={home.signature.title}
+  subtitle={home.signature.subtitle}
+/>
               <Link
                 to="/menu"
                 className="text-sm text-primary hover:text-burgundy-deep underline underline-offset-4"
@@ -176,8 +267,11 @@ function Home() {
             className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
           >
             {featured.map((p) => (
-              <motion.div key={p.id} variants={revealItem}>
-                <ProductCard p={p} />
+              <motion.div key={p._id} variants={revealItem}>
+               <ProductCard
+  p={p}
+  onOrder={addToCart}
+/>
               </motion.div>
             ))}
           </RevealStagger>
@@ -190,28 +284,26 @@ function Home() {
               <div className="absolute inset-0 bg-damask opacity-30 pointer-events-none" />
               <div className="relative">
                 <div className="text-[11px] tracking-[0.3em] uppercase text-gold-soft">
-                  Corporate & Bulk
+                  {home.corporate.label}
                 </div>
                 <h2 className="mt-4 font-display text-4xl md:text-5xl leading-tight">
-                  Gifting your team, clients, and the years ahead.
+                  {home.corporate.title}
                 </h2>
                 <p className="mt-5 text-primary-foreground/80 max-w-lg leading-relaxed">
-                  Custom-branded boxes, dedicated account manager, GST
-                  invoicing, and delivery across 400+ cities. Diwali,
-                  milestones, or a Tuesday — we scale from 20 boxes to 20,000.
+{home.corporate.description}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-4">
                   <Link
-                    to="/corporate"
+                     to={home.corporate.primaryButtonLink}
                     className="btn-luxe inline-flex items-center gap-2 rounded-full bg-gold text-primary px-6 py-3 text-sm font-medium hover:bg-gold-soft transition-colors"
                   >
-                    Request a quote
+                    {home.corporate.primaryButtonText}
                   </Link>
                   <Link
-                    to="/menu"
+                     to={home.corporate.secondaryButtonLink}
                     className="inline-flex items-center gap-2 rounded-full border border-gold/50 text-gold-soft px-6 py-3 text-sm hover:bg-gold/10 transition-colors"
                   >
-                    See hampers
+                    {home.corporate.secondaryButtonText}
                   </Link>
                 </div>
               </div>
@@ -222,7 +314,7 @@ function Home() {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, margin: "-80px" }}
                   transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                  src={corporateImg}
+                  src={home.corporate.image}
                   alt="Saatvik corporate gifting box"
                   loading="lazy"
                   width={1400}
@@ -235,45 +327,50 @@ function Home() {
         </section>
 
         {/* Testimonials */}
-        <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
-          <Reveal>
-            <SectionHeading
-              eyebrow="Kind words"
-              title="Told at the counter."
-              align="center"
-            />
-          </Reveal>
-          <RevealStagger stagger={0.14} className="mt-12 grid gap-6 md:grid-cols-3">
-            {[
-              {
-                q: "The kaju katli tastes like my grandmother's — but wrapped like something from Milan.",
-                a: "Ananya R.",
-              },
-              {
-                q: "We shipped 800 Diwali boxes to clients across six countries. Not one complaint. Only compliments.",
-                a: "Rohan M., CFO",
-              },
-              {
-                q: "The chakli. That's it. That's the review.",
-                a: "Kunal S.",
-              },
-            ].map((t, i) => (
-              <motion.blockquote
-                key={i}
-                variants={revealItem}
-                className="rounded-2xl bg-card border border-border p-8 shadow-soft"
-              >
-                <div className="text-gold text-2xl font-display leading-none">
-                  “
-                </div>
-                <p className="mt-3 text-foreground/80 leading-relaxed">{t.q}</p>
-                <footer className="mt-6 text-sm tracking-widest uppercase text-muted-foreground">
-                  — {t.a}
-                </footer>
-              </motion.blockquote>
-            ))}
-          </RevealStagger>
-        </section>
+<section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
+  <Reveal>
+    <SectionHeading
+      eyebrow="Kind words"
+      title="Told at the counter."
+      align="center"
+    />
+  </Reveal>
+
+  <RevealStagger
+    stagger={0.14}
+    className="mt-12 grid gap-6 md:grid-cols-3"
+  >
+    {home.testimonials.map((t: any, i: number) => (
+      <motion.blockquote
+        key={i}
+        variants={revealItem}
+        className="rounded-2xl bg-card border border-border p-8 shadow-soft"
+      >
+        {t.image && (
+          <img
+            src={t.image}
+            alt={t.name}
+            className="w-16 h-16 rounded-full object-cover mx-auto mb-4"
+          />
+        )}
+
+        <p className="text-foreground/80 leading-relaxed">
+          "{t.review}"
+        </p>
+
+        <footer className="mt-6 text-center">
+          <h4 className="font-semibold">
+            {t.name}
+          </h4>
+
+          <p className="text-sm text-muted-foreground">
+            {t.designation}
+          </p>
+        </footer>
+      </motion.blockquote>
+    ))}
+  </RevealStagger>
+</section>
       </main>
       <Footer />
     </div>

@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useState,
+  useEffect,
   ReactNode,
 } from "react";
 
@@ -24,6 +25,15 @@ export type CartItem = {
   qty: number;
 };
 
+type AppliedCoupon = {
+  code: string;
+  name: string;
+  discountType: "percentage" | "fixed";
+  discountValue: number;
+  discount: number;
+  grandTotal: number;
+};
+
 type CartContextType = {
   cart: CartItem[];
   open: boolean;
@@ -33,6 +43,16 @@ type CartContextType = {
   cartItems: CartItem[];
 
   subtotal: number;
+
+  coupon: AppliedCoupon | null;
+
+  discount: number;
+
+  grandTotal: number;
+
+  applyCoupon: (coupon: AppliedCoupon) => void;
+
+  removeCoupon: () => void;
 
   addToCart: (
     product: Product,
@@ -53,7 +73,7 @@ type CartContextType = {
 
   checkout: () => void;
 };
-
+const CART_STORAGE_KEY = "saatvik-cart";
 const CartContext = createContext<CartContextType | null>(null);
 
 export function CartProvider({
@@ -63,6 +83,31 @@ export function CartProvider({
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
 const [open, setOpen] = useState(false);
+const [coupon, setCoupon] =
+  useState<AppliedCoupon | null>(null);
+  useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  const savedCart = window.localStorage.getItem(
+    CART_STORAGE_KEY
+  );
+
+  if (savedCart) {
+    try {
+      setCart(JSON.parse(savedCart));
+    } catch {
+      setCart([]);
+    }
+  }
+}, []);
+useEffect(() => {
+  if (typeof window === "undefined") return;
+
+  window.localStorage.setItem(
+    CART_STORAGE_KEY,
+    JSON.stringify(cart)
+  );
+}, [cart]);
 const cartItems = cart;
 
 const subtotal = cart.reduce(
@@ -70,6 +115,11 @@ const subtotal = cart.reduce(
     sum + item.selectedVariant.price * item.qty,
   0
 );
+
+const discount = coupon?.discount ?? 0;
+
+const grandTotal =
+  subtotal - discount;
 const addToCart = (
   product: Product,
   variant: Variant,
@@ -103,7 +153,8 @@ const addToCart = (
     ];
   });
 
-  setOpen(true);
+  // setOpen(true);
+  setCoupon(null);
 };
 const setQty = (
   productId: string,
@@ -127,6 +178,7 @@ const setQty = (
       })
       .filter((item) => item.qty > 0)
   );
+  setCoupon(null);
 };
 const changeVariant = (
   productId: string,
@@ -148,6 +200,14 @@ const changeVariant = (
       };
     })
   );
+  setCoupon(null);
+};
+const applyCoupon = (couponData: AppliedCoupon) => {
+  setCoupon(couponData);
+};
+
+const removeCoupon = () => {
+  setCoupon(null);
 };
 const checkout = () => {
   console.log("Checkout");
@@ -163,17 +223,21 @@ const checkout = () => {
 
     subtotal,
 
+    coupon,
+    discount,
+    grandTotal,
+
+    applyCoupon,
+    removeCoupon,
+
     addToCart,
-
     setQty,
-
     changeVariant,
-
     checkout,
   }}
 >
-      {children}
-    </CartContext.Provider>
+  {children}
+</CartContext.Provider>
   );
 }
 

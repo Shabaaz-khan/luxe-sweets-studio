@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { getAboutPage } from "@/api/api";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { SectionHeading } from "@/components/site/SectionHeading";
-import hero from "@/assets/hero-sweets.jpg";
+// import hero from "@/assets/hero-sweets.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -23,18 +25,61 @@ export const Route = createFileRoute("/about")({
   }),
   component: AboutPage,
 });
+function getYoutubeEmbedUrl(url: string) {
+  if (!url) return "";
 
+  try {
+    // Already an embed URL
+    if (url.includes("/embed/")) {
+      return url;
+    }
+
+    // Short URL
+    if (url.includes("youtu.be/")) {
+      const id = url.split("youtu.be/")[1].split("?")[0];
+      return `https://www.youtube.com/embed/${id}`;
+    }
+
+    // Normal watch URL
+    if (url.includes("youtube.com/watch")) {
+      const id = new URL(url).searchParams.get("v");
+      if (id) {
+        return `https://www.youtube.com/embed/${id}`;
+      }
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  return "";
+}
 function AboutPage() {
+  const [page, setPage] = useState<any>(null);
+
+useEffect(() => {
+  load();
+}, []);
+
+async function load() {
+  try {
+    const data = await getAboutPage();
+    setPage(data);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+if (!page) return null;
   return (
     <div className="min-h-screen">
       <Nav />
       <main className="pt-28 md:pt-36">
         <section className="mx-auto max-w-7xl px-5 md:px-8">
-          <SectionHeading
-            eyebrow="Our Story"
-            title="A recipe passed down. A counter built up."
-            subtitle="From a single glass counter in 1962 to a modern kitchen serving 400+ cities — the ingredients haven't changed."
-          />
+<SectionHeading
+  eyebrow={page.eyebrow}
+  title={page.title}
+  subtitle={page.subtitle}
+/>
         </section>
 
         <section className="mx-auto max-w-7xl px-5 md:px-8 mt-16 grid lg:grid-cols-2 gap-14 items-center">
@@ -46,54 +91,37 @@ function AboutPage() {
             className="relative"
           >
             <div className="absolute -inset-6 bg-gradient-gold opacity-15 blur-3xl rounded-3xl" />
-            <img
-              src={hero}
-              alt="Signature mithai on brass thali"
-              width={1600}
-              height={1600}
-              className="relative rounded-3xl border border-gold/25 shadow-luxe"
-            />
+<div className="relative rounded-3xl overflow-hidden border border-gold/25 shadow-luxe aspect-video">
+
+  <iframe
+    className="w-full h-full"
+    src={getYoutubeEmbedUrl(page.videoUrl)}
+    title="Welcome to Saatvik Sweets & Savouries"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allowFullScreen
+  />
+
+</div>
           </motion.div>
           <div className="space-y-6 text-foreground/80 leading-relaxed">
-            <p className="text-xl font-display text-primary">
-              "The best mithai isn't made faster. It's made slower."
-            </p>
-            <p>
-              Saatvik began in 1962 when our grandfather set up a small counter
-              opposite the Heritage Lane market in Mumbai. He believed three
-              things: pure ghee, patient hands, and no shortcuts. Sixty years
-              later, that counter has grown into a modern kitchen — but the
-              rules haven't moved an inch.
-            </p>
-            <p>
-              Today, we ship across 400+ Indian cities and to families in more
-              than 20 countries. Every ladoo is still shaped by hand. Every
-              chakli is still roasted the morning it's dispatched. The counter
-              hasn't gotten faster. Only larger.
-            </p>
+   <p className="text-xl font-display text-primary">
+  {page.quote}
+</p>
+<p>
+  {page.story1}
+</p>
+<p>
+  {page.story2}
+</p>
           </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-5 md:px-8 mt-24 grid md:grid-cols-3 gap-6">
-          {[
-            {
-              year: "1962",
-              title: "The counter opens",
-              body: "A single glass shelf, four ladoo trays, and one cast-iron kadhai.",
-            },
-            {
-              year: "1998",
-              title: "A modern kitchen",
-              body: "The next generation opens a certified, temperature-controlled kitchen.",
-            },
-            {
-              year: "Today",
-              title: "Made for the world",
-              body: "Corporate gifting, pan-India delivery, and international shipping.",
-            },
-          ].map((s, i) => (
+ {page.timeline?.map((s: any, i: number) => (
             <motion.div
-              key={s.year}
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}

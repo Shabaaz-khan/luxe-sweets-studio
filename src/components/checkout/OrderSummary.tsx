@@ -4,6 +4,10 @@ import { createOrder } from "@/api/api";
 import { verifyPayment } from "@/api/api";
 import { loadRazorpay } from "@/lib/loadRazorpay";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { useState } from "react";
+import { useCustomerAuth } from "@/context/CustomerAuthContext";
+import LoginDialog from "./LoginDialog";
 type Address = {
   firstName: string;
   lastName: string;
@@ -25,79 +29,85 @@ type Props = {
 export default function OrderSummary({
   address,
 }: Props) {
-  const {
-    cartItems,
-    subtotal,
-  } = useCart();
+const {
+  cartItems,
+  subtotal,
+  coupon,
+  discount,
+  grandTotal,
+} = useCart();
+
+const delivery = 0;
 const navigate = useNavigate();
-  const delivery = 0;
-  const discount = 0;
+const { isAuthenticated } = useCustomerAuth();
 
-  const grandTotal =
-    subtotal + delivery - discount;
+const [showLoginDialog, setShowLoginDialog] = useState(false);
 
+const handlePaymentClick = () => {
+  if (isAuthenticated) {
+    handleCheckout();
+  } else {
+    setShowLoginDialog(true);
+  }
+};
  const handleCheckout = async () => {
 
   if (!address.firstName.trim()) {
-    return alert("Enter First Name");
+    return toast.error("Please enter first name");
   }
 
-  if (!address.phone.trim()) {
-    return alert("Enter Phone Number");
-  }
+ if (!/^\d{10}$/.test(address.phone)) {
+  toast.error("Enter a valid mobile number");
+  return;
+}
 
-  if (!address.email.trim()) {
-    return alert("Enter Email");
-  }
+if (!/\S+@\S+\.\S+/.test(address.email)) {
+  toast.error("Enter a valid email");
+  return;
+}
 
   if (!address.address1.trim()) {
-    return alert("Enter Address");
+    return toast.error("Please enter address");
   }
 
   if (!address.city.trim()) {
-    return alert("Enter City");
+    return toast.error("Please enter city");
   }
 
   if (!address.pincode.trim()) {
-    return alert("Enter Pincode");
+    return toast.error("Please enter pincode");
   }
 
-  const payload = {
+const payload = {
 
-    customer: {
+  customer: {
+    name: `${address.firstName} ${address.lastName}`,
+    email: address.email,
+    phone: address.phone,
+    address: `${address.address1}, ${address.address2}, ${address.landmark}`,
+    city: address.city,
+    pincode: address.pincode,
+  },
 
-      name: `${address.firstName} ${address.lastName}`,
+  couponCode: coupon?.code ?? null,
 
-      email: address.email,
+  couponName: coupon?.name,
+discountType: coupon?.discountType,
+discountValue: coupon?.discountValue,
+discountAmount: discount,
 
-      phone: address.phone,
+  grandTotal,
 
-      address:
-        `${address.address1}, ${address.address2}, ${address.landmark}`,
+  shippingFee: 0,
 
-      city: address.city,
-
-      pincode: address.pincode,
-
-    },
-
-    shippingFee: 0,
-
-    items: cartItems.map(item => ({
-
-      product_id: item.product._id,
-
-      name: item.product.name,
-
-      image: item.product.imageUrl,
-
-      price: item.selectedVariant.price,
-
-      quantity: item.qty,
-
-    })),
-
-  };
+  items: cartItems.map(item => ({
+    product_id: item.product._id,
+    name: item.product.name,
+    image: item.product.imageUrl,
+    price: item.selectedVariant.price,
+    quantity: item.qty,
+  })),
+};
 
   console.log(payload);
 
@@ -108,7 +118,7 @@ const order = await createOrder(payload);
 const loaded = await loadRazorpay();
 
 if (!loaded) {
-  alert("Unable to load Razorpay");
+  toast.error("Unable to load Razorpay");
   return;
 }
 
@@ -141,7 +151,7 @@ const options = {
 
       });
 
-      alert("Payment Successful");
+      toast.success("Payment successful");
 
       navigate({
         to: "/",
@@ -151,7 +161,7 @@ const options = {
 
       console.error(err);
 
-      alert("Payment Verification Failed");
+     toast.error("Payment verification failed");
 
     }
 
@@ -183,13 +193,14 @@ razorpay.open();
 
     console.error(err);
 
-    alert("Unable to create order");
+    toast.error("Unable to create order");
 
   }
 
 };
 
   return (
+      <>
     <div className="rounded-3xl border border-border bg-card p-8 shadow-soft sticky top-28">
 
       <h2 className="font-display text-3xl text-primary mb-6">
@@ -260,12 +271,20 @@ razorpay.open();
       </div>
 
       <button
-        onClick={handleCheckout}
+        onClick={handlePaymentClick}
         className="mt-8 w-full rounded-full bg-primary text-primary-foreground py-4 text-lg font-semibold hover:bg-primary/90"
       >
         Continue to Payment
       </button>
 
     </div>
+        <LoginDialog
+      open={showLoginDialog}
+      onOpenChange={setShowLoginDialog}
+      onContinueGuest={handleCheckout}
+      address={address}
+    />
+    </>
   );
+
 }

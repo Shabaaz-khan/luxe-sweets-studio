@@ -1,13 +1,11 @@
-import { products } from "@/lib/menu";
+// import { products } from "@/lib/menu";
 
-export function Marquee() {
-  const items = [
-    ...products.map((p) => p.name),
-    "Made with pure ghee",
-    "Slow-cooked",
-    "Hand shaped",
-    "Est. 1962",
-  ];
+export function Marquee({
+  items,
+}: {
+  items: string[];
+}) {
+  
   const track = [...items, ...items];
 
   return (

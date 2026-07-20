@@ -1,13 +1,19 @@
 import { motion, useMotionValue, useTransform, useScroll } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import heroPlate from "@/assets/hero-plate.jpg";
-import ladoo from "@/assets/ladoo.png";
-import katli from "@/assets/katli.png";
-import sweet2 from "@/assets/sweet-2.jpg";
-import savoury from "@/assets/savoury-1.jpg";
+// import heroPlate from "@/assets/hero-plate.jpg";
+// import ladoo from "@/assets/ladoo.png";
+// import katli from "@/assets/katli.png";
+// import sweet2 from "@/assets/sweet-2.jpg";
+// import savoury from "@/assets/savoury-1.jpg";
 
-export function Hero3D() {
+export function Hero3D({
+  hero,
+}: {
+  hero: any;
+}) {
+   if (!hero) return null;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -43,9 +49,8 @@ export function Hero3D() {
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, [mx, my]);
-
-  const words = ["The", "taste", "of", "a", "celebration,"];
-  const words2 = ["crafted", "by", "hand."];
+const words = (hero.titleLine1 || "").split(" ");
+const words2 = (hero.titleLine2 || "").split(" ");
 
   return (
     <section ref={containerRef} className="relative min-h-[92vh] pt-24 md:pt-28 pb-20 overflow-hidden">
@@ -80,22 +85,22 @@ export function Hero3D() {
         />
       ))}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 pt-10 md:pt-16 grid lg:grid-cols-12 gap-10 items-center">
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 pt-10 md:pt-0 grid lg:grid-cols-12 gap-10 items-center">
         {/* Text column */}
         <motion.div style={{ y: textScrollY }} className="lg:col-span-6 text-cream">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-burgundy-deep/40 backdrop-blur px-4 py-1.5 text-[11px] tracking-[0.28em] uppercase text-gold-soft"
-          >
-            <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
-            Est. 1962 · Handcrafted daily
-          </motion.div>
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.7 }}
+  className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-burgundy-deep/40 backdrop-blur px-4 py-1.5 text-[11px] tracking-[0.28em] uppercase text-gold-soft"
+>
+  <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+  Est. {hero.badgeYear} · Handcrafted daily
+</motion.div>
 
           <h1 className="mt-7 font-display text-[3.2rem] leading-[1.02] md:text-7xl lg:text-[5.5rem] text-cream text-balance">
             <span className="block">
-              {words.map((w, i) => (
+              {words.map((w: string, i: number) => (
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, y: 36, rotateX: -60 }}
@@ -108,7 +113,7 @@ export function Hero3D() {
               ))}
             </span>
             <span className="block italic mt-1">
-              {words2.map((w, i) => (
+              {words2.map((w: string, i: number) => (
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, y: 36, rotateX: -60 }}
@@ -128,8 +133,7 @@ export function Hero3D() {
             transition={{ duration: 0.7, delay: 1.2 }}
             className="mt-8 max-w-xl text-lg text-cream/75 leading-relaxed"
           >
-            Slow-cooked mithai. Freshly roasted namkeen. Presented for the tables of today —
-            wrapped in the recipes of our grandmothers.
+            {hero.description}
           </motion.p>
 
           <motion.div
@@ -139,19 +143,19 @@ export function Hero3D() {
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <Link
-              to="/menu"
+              to={hero.primaryButtonLink}
               className="btn-luxe group inline-flex items-center gap-3 rounded-full bg-gold text-primary pl-7 pr-2 py-2 text-sm font-semibold tracking-wide shadow-luxe hover:bg-gold-soft transition-colors"
             >
-              Explore the menu
+              {hero.primaryButtonText}
               <span className="grid place-items-center w-10 h-10 rounded-full bg-primary text-gold group-hover:translate-x-0.5 transition-transform">
                 →
               </span>
             </Link>
             <Link
-              to="/corporate"
+              to={hero.secondaryButtonLink}
               className="inline-flex items-center gap-2 rounded-full border border-gold/50 px-7 py-3.5 text-sm text-cream hover:bg-gold/10 transition-colors"
             >
-              Corporate gifting
+             {hero.secondaryButtonText}
             </Link>
           </motion.div>
 
@@ -161,16 +165,17 @@ export function Hero3D() {
             transition={{ duration: 1, delay: 1.6 }}
             className="mt-14 grid grid-cols-3 gap-6 max-w-md"
           >
-            {[
-              { n: "60+", l: "Years of craft" },
-              { n: "120+", l: "Corporate clients" },
-              { n: "4.9★", l: "Google rating" },
-            ].map((s) => (
-              <div key={s.l}>
-                <div className="font-display text-3xl md:text-4xl text-gold">{s.n}</div>
-                <div className="mt-1 text-[10px] tracking-widest uppercase text-cream/60">{s.l}</div>
-              </div>
-            ))}
+ {hero.stats.map((s: any) => (
+    <div key={s.label}>
+      <div className="font-display text-3xl md:text-4xl text-gold">
+        {s.number}
+      </div>
+
+      <div className="mt-1 text-[10px] tracking-widest uppercase text-cream/60">
+        {s.label}
+      </div>
+    </div>
+  ))}
           </motion.div>
         </motion.div>
 
@@ -196,7 +201,7 @@ export function Hero3D() {
                 <div className="absolute inset-0 rounded-full bg-gold/20 blur-3xl scale-110" />
                 <div className="absolute inset-0 rounded-full animate-spin-slow">
                   <img
-                    src={heroPlate}
+                    src={hero.heroPlateImage}
                     alt="Assortment of handcrafted Indian sweets on a brass thali"
                     width={1200}
                     height={1200}
@@ -210,7 +215,7 @@ export function Hero3D() {
 
             {/* Floating katli chip */}
             <motion.img
-              src={katli}
+             src={hero.katliImage}
               alt=""
               aria-hidden
               style={{ x: katliX, y: katliY }}
@@ -219,7 +224,7 @@ export function Hero3D() {
 
             {/* Floating ladoo */}
             <motion.img
-              src={ladoo}
+              src={hero.ladooImage}
               alt=""
               aria-hidden
               style={{ x: ladooX, y: ladooY }}
@@ -231,10 +236,10 @@ export function Hero3D() {
               style={{ x: card1X, y: card1Y }}
               className="absolute -left-1 md:left-2 bottom-8 md:bottom-16 w-40 md:w-48 rounded-2xl overflow-hidden shadow-luxe rotate-[-8deg] animate-float-slow border-2 border-cream"
             >
-              <img src={sweet2} alt="Rose gulab jamun" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
+              <img src={hero.card1.image}alt="Rose gulab jamun" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
               <div className="p-3 bg-cream/95 backdrop-blur">
-                <div className="text-[10px] tracking-widest uppercase text-gold">Signature</div>
-                <div className="font-display text-primary">Gulab Jamun</div>
+                <div className="text-[10px] tracking-widest uppercase text-gold">{hero.card1.label}</div>
+                <div className="font-display text-primary">  {hero.card1.title}</div>
               </div>
             </motion.div>
 
@@ -243,10 +248,10 @@ export function Hero3D() {
               style={{ x: card2X, y: card2Y }}
               className="absolute right-0 bottom-2 md:bottom-6 w-40 md:w-52 rounded-2xl overflow-hidden shadow-luxe rotate-[7deg] animate-float-med border-2 border-cream"
             >
-              <img src={savoury} alt="Traditional namkeen mix" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
+              <img src={hero.card2.image}alt="Traditional namkeen mix" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
               <div className="p-3 bg-cream/95 backdrop-blur">
-                <div className="text-[10px] tracking-widest uppercase text-gold">Freshly roasted</div>
-                <div className="font-display text-primary">Namkeen</div>
+                <div className="text-[10px] tracking-widest uppercase text-gold">{hero.card2.label}</div>
+                <div className="font-display text-primary">{hero.card2.title}</div>
               </div>
             </motion.div>
 
@@ -257,8 +262,8 @@ export function Hero3D() {
             >
               <div className="text-center leading-tight">
                 <div className="text-[9px] tracking-[0.28em] uppercase">Since</div>
-                <div className="font-display text-3xl md:text-4xl">1962</div>
-                <div className="text-[8px] tracking-[0.28em] uppercase text-primary/70">Mumbai</div>
+                <div className="font-display text-3xl md:text-4xl">{hero.badgeYear}</div>
+                <div className="text-[8px] tracking-[0.28em] uppercase text-primary/70">{hero.badgeCity}</div>
               </div>
             </motion.div>
           </motion.div>

@@ -9,15 +9,31 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MenuRouteImport } from './routes/menu'
 import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AccountIndexRouteImport } from './routes/account/index'
 import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
+import { Route as AuthRegisterRouteImport } from './routes/auth/register'
+import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
+import { Route as AccountProfileRouteImport } from './routes/account/profile'
+import { Route as AccountOrdersRouteImport } from './routes/account/orders'
 
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
@@ -26,6 +42,11 @@ const SuccessRoute = SuccessRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MenuRoute = MenuRouteImport.update({
@@ -38,9 +59,19 @@ const CorporateRoute = CorporateRouteImport.update({
   path: '/corporate',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -53,89 +84,203 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AccountRoute,
+} as any)
 const ProductIdRoute = ProductIdRouteImport.update({
   id: '/product/$id',
   path: '/product/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRegisterRoute = AuthRegisterRouteImport.update({
+  id: '/auth/register',
+  path: '/auth/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthLoginRoute = AuthLoginRouteImport.update({
+  id: '/auth/login',
+  path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountProfileRoute = AccountProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AccountRoute,
+} as any)
+const AccountOrdersRoute = AccountOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AccountRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/menu': typeof MenuRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/product/$id': typeof ProductIdRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/menu': typeof MenuRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/product/$id': typeof ProductIdRoute
+  '/account': typeof AccountIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
+  '/contact': typeof ContactRoute
   '/corporate': typeof CorporateRoute
   '/menu': typeof MenuRoute
+  '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/success': typeof SuccessRoute
+  '/terms': typeof TermsRoute
+  '/account/orders': typeof AccountOrdersRoute
+  '/account/profile': typeof AccountProfileRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
+  '/auth/login': typeof AuthLoginRoute
+  '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/product/$id': typeof ProductIdRoute
+  '/account/': typeof AccountIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
+    | '/account'
     | '/checkout'
+    | '/contact'
     | '/corporate'
     | '/menu'
+    | '/privacy'
     | '/sitemap.xml'
     | '/success'
+    | '/terms'
+    | '/account/orders'
+    | '/account/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/reset-password'
     | '/product/$id'
+    | '/account/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/checkout'
+    | '/contact'
     | '/corporate'
     | '/menu'
+    | '/privacy'
     | '/sitemap.xml'
     | '/success'
+    | '/terms'
+    | '/account/orders'
+    | '/account/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/reset-password'
     | '/product/$id'
+    | '/account'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/account'
     | '/checkout'
+    | '/contact'
     | '/corporate'
     | '/menu'
+    | '/privacy'
     | '/sitemap.xml'
     | '/success'
+    | '/terms'
+    | '/account/orders'
+    | '/account/profile'
+    | '/auth/forgot-password'
+    | '/auth/login'
+    | '/auth/register'
+    | '/auth/reset-password'
     | '/product/$id'
+    | '/account/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AccountRoute: typeof AccountRouteWithChildren
   CheckoutRoute: typeof CheckoutRoute
+  ContactRoute: typeof ContactRoute
   CorporateRoute: typeof CorporateRoute
   MenuRoute: typeof MenuRoute
+  PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   SuccessRoute: typeof SuccessRoute
+  TermsRoute: typeof TermsRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
+  AuthLoginRoute: typeof AuthLoginRoute
+  AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   ProductIdRoute: typeof ProductIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/success': {
       id: '/success'
       path: '/success'
@@ -148,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/menu': {
@@ -164,11 +316,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CorporateRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
       fullPath: '/checkout'
       preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -185,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account/': {
+      id: '/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof AccountRoute
+    }
     '/product/$id': {
       id: '/product/$id'
       path: '/product/$id'
@@ -192,17 +365,82 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/register': {
+      id: '/auth/register'
+      path: '/auth/register'
+      fullPath: '/auth/register'
+      preLoaderRoute: typeof AuthRegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/login': {
+      id: '/auth/login'
+      path: '/auth/login'
+      fullPath: '/auth/login'
+      preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/account/profile': {
+      id: '/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AccountProfileRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/account/orders': {
+      id: '/account/orders'
+      path: '/orders'
+      fullPath: '/account/orders'
+      preLoaderRoute: typeof AccountOrdersRouteImport
+      parentRoute: typeof AccountRoute
+    }
   }
 }
+
+interface AccountRouteChildren {
+  AccountOrdersRoute: typeof AccountOrdersRoute
+  AccountProfileRoute: typeof AccountProfileRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+}
+
+const AccountRouteChildren: AccountRouteChildren = {
+  AccountOrdersRoute: AccountOrdersRoute,
+  AccountProfileRoute: AccountProfileRoute,
+  AccountIndexRoute: AccountIndexRoute,
+}
+
+const AccountRouteWithChildren =
+  AccountRoute._addFileChildren(AccountRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AccountRoute: AccountRouteWithChildren,
   CheckoutRoute: CheckoutRoute,
+  ContactRoute: ContactRoute,
   CorporateRoute: CorporateRoute,
   MenuRoute: MenuRoute,
+  PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   SuccessRoute: SuccessRoute,
+  TermsRoute: TermsRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
+  AuthLoginRoute: AuthLoginRoute,
+  AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   ProductIdRoute: ProductIdRoute,
 }
 export const routeTree = rootRouteImport

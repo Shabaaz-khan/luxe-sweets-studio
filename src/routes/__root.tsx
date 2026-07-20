@@ -8,6 +8,8 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { CartProvider, useCart } from "@/context/CartContext";
+import { SettingsProvider } from "@/context/SettingsContext";
+import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
 import { useEffect, type ReactNode } from "react";
 import CartDrawer from "@/components/site/CartDrawer";
 import "@fontsource/cormorant-garamond/400.css";
@@ -22,7 +24,7 @@ import "@fontsource/great-vibes/400.css";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
-import { SmoothScroll } from "@/components/site/SmoothScroll";
+// import { SmoothScroll } from "@/components/site/SmoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -139,9 +141,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
+  <SettingsProvider>
+    <CartProvider>
+      <CustomerAuthProvider>
+      <AppContent />
+      </CustomerAuthProvider>
+    </CartProvider>
+  </SettingsProvider>
     </QueryClientProvider>
   );
 }
