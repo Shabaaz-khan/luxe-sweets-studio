@@ -24,7 +24,7 @@ function CheckoutPage() {
     city: "",
     state: "",
     pincode: "",
-    saveAddress: false,
+    saveAddress: true,
   });
 useEffect(() => {
   const savedAddress = sessionStorage.getItem("checkout-address");
@@ -33,8 +33,14 @@ useEffect(() => {
     setAddress(JSON.parse(savedAddress));
   }
 }, []);
+useEffect(() => {
+  sessionStorage.setItem(
+    "checkout-address",
+    JSON.stringify(address)
+  );
+}, [address]);
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen ">
 
       <Nav />
 

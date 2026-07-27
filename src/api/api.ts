@@ -77,3 +77,35 @@ export const getMyOrders = async () => {
   const { data } = await api.get("/orders/my-orders");
   return data.orders;
 };
+
+export const getAddresses = async () => {
+  const { data } = await api.get("/addresses");
+  return data;
+};
+
+export const createAddress = async (payload: any) => {
+  const { data } = await api.post("/addresses", payload);
+  return data;
+};
+
+export const updateAddress = async (
+  id: string,
+  payload: any
+) => {
+  const { data } = await api.put(`/addresses/${id}`, payload);
+  return data;
+};
+
+export const deleteAddress = async (id: string) => {
+  const { data } = await api.delete(`/addresses/${id}`);
+  return data;
+};
+
+export const setDefaultAddress = async (id: string) => {
+  const { data } = await api.put(`/addresses/${id}/default`);
+  return data;
+};
+export async function getContactPage() {
+  const { data } = await api.get("/contact-page");
+  return data;
+}

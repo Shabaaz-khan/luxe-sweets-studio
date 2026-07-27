@@ -76,9 +76,11 @@ export function CustomerHeader({
         {/* Right */}
         <div className="flex items-center gap-3">
 
-          <Button variant="ghost" size="icon">
-            <ShoppingCart className="h-5 w-5" />
-          </Button>
+<Link to="/menu">
+  <Button variant="ghost" size="icon">
+    <ShoppingCart className="h-5 w-5" />
+  </Button>
+</Link>
 
           <Button variant="ghost" size="icon">
             <Bell className="h-5 w-5" />

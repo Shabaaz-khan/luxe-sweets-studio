@@ -9,7 +9,7 @@ export function Marquee({
   const track = [...items, ...items];
 
   return (
-    <div className="relative bg-gradient-burgundy text-cream border-y border-gold/20 overflow-hidden">
+    <div className="relative bg-[#7E003E] text-cream border-y border-gold/20 overflow-hidden">
       <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-burgundy-deep to-transparent z-10" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-burgundy-deep to-transparent z-10" />
       <div className="flex animate-marquee whitespace-nowrap py-6">

@@ -54,7 +54,7 @@ const cheapestVariant =
       )
     : null;
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen ">
 
       <Nav />
 

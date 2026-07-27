@@ -12,18 +12,8 @@ import { SITE } from "@/lib/site";
 import { ShoppingBag, Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
-export const Route = createFileRoute("/menu")({
-validateSearch: (search: Record<string, unknown>) => ({
-  category:
-    typeof search.category === "string"
-      ? search.category
-      : "all",
+export const Route = createFileRoute("/collections/$slug")({
 
-  type:
-    typeof search.type === "string"
-      ? search.type
-      : "all",
-}),
 
   head: () => ({
     meta: [
@@ -80,7 +70,7 @@ type Product = {
   };
 };
 function MenuPage() {
-const { category, type } = Route.useSearch();
+const { slug } = Route.useParams();
 const [categories, setCategories] = useState<Category[]>([]);
 const [types, setTypes] = useState<Type[]>([]);
 const [products, setProducts] = useState<Product[]>([]);  
@@ -124,26 +114,15 @@ setMenuPage(menu);
   loadData();
 }, []);
 
-const filteredTypes = useMemo(() => {
-  if (category === "all") return [];
 
-  return types.filter(
-    (t) => t.category?._id === category
-  );
-}, [types, category]);
 const list = useMemo(() => {
   return products.filter((p) => {
-const categoryMatch =
-  category === "all" ||
-  p.category?.slug === category;
-
-const typeMatch =
-  type === "all" ||
-  p.types?.slug === type;
-
-    return categoryMatch && typeMatch;
+    return (
+      p.category?.slug === slug ||
+      p.types?.slug === slug
+    );
   });
-}, [products, category, type]);
+}, [products, slug]);
 
 if (!menuPage) return null;
 
@@ -159,40 +138,7 @@ if (!menuPage) return null;
 />
 
           {/* Filter chips */}
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            {(["all", ...categories.map(c => c.slug)] as Filter[]).map((f) => (
-              <button
-                key={f}
-onClick={() =>
-navigate({
-  to: "/collections/$slug",
-  params: {
-    slug: f,
-  },
-})
-}
-                className={`rounded-full px-5 py-2 text-sm tracking-wide border transition-colors ${
-                 category === f
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "bg-transparent text-primary border-primary/25 hover:bg-primary/5"
-                }`}
-              >
-{f === "all"
-  ? menuPage.allTabName
-  : categories.find(c => c.slug === f)?.name
-  }    
-            </button>
-            ))}
-            {/* <div className="ml-auto">
-              <button
-                onClick={() => setOpen(true)}
-                className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm shadow-soft"
-              >
-                <ShoppingBag size={16} />
-                Cart · {cartItems.reduce((s, i) => s + i.qty, 0)}
-              </button>
-            </div> */}
-          </div>
+
 
           {/* Grid */}
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

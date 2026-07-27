@@ -86,7 +86,7 @@ export default function CorporateInquiryForm({ page }: Props) {
   };
 
   return (
-    <div className="rounded-3xl bg-card border border-border shadow-soft p-6 md:p-12">
+    <div className="p-6 md:p-12">
 
       {submitted ? (
 

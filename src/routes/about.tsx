@@ -74,13 +74,7 @@ if (!page) return null;
     <div className="min-h-screen">
       <Nav />
       <main className="pt-28 md:pt-36">
-        <section className="mx-auto max-w-7xl px-5 md:px-8">
-<SectionHeading
-  eyebrow={page.eyebrow}
-  title={page.title}
-  subtitle={page.subtitle}
-/>
-        </section>
+
 
         <section className="mx-auto max-w-7xl px-5 md:px-8 mt-16 grid lg:grid-cols-2 gap-14 items-center">
           <motion.div
@@ -93,17 +87,37 @@ if (!page) return null;
             <div className="absolute -inset-6 bg-gradient-gold opacity-15 blur-3xl rounded-3xl" />
 <div className="relative rounded-3xl overflow-hidden border border-gold/25 shadow-luxe aspect-video">
 
+ {page.videoFile ? (
+<video
+  className="w-full h-full object-cover"
+  autoPlay
+  muted
+  loop
+  playsInline
+  controls={false}
+  disablePictureInPicture
+  controlsList="nodownload noplaybackrate noremoteplayback"
+  onContextMenu={(e) => e.preventDefault()}
+>
+  <source src={page.videoFile} type="video/mp4" />
+</video>
+) : page.videoUrl ? (
   <iframe
     className="w-full h-full"
     src={getYoutubeEmbedUrl(page.videoUrl)}
-    title="Welcome to Saatvik Sweets & Savouries"
-    frameBorder="0"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerPolicy="strict-origin-when-cross-origin"
+    title="About Video"
     allowFullScreen
   />
+) : null}
 
 </div>
+        <section className="mx-auto max-w-7xl px-5 md:px-8">
+<SectionHeading
+  eyebrow={page.eyebrow}
+  title={page.title}
+  subtitle={page.subtitle}
+/>
+        </section>
           </motion.div>
           <div className="space-y-6 text-foreground/80 leading-relaxed">
    <p className="text-xl font-display text-primary">

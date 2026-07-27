@@ -25,7 +25,7 @@ const socialIcons: any = {
   WhatsApp: MessageCircle,
 };
   return (
-    <footer className="mt-24 bg-gradient-burgundy text-primary-foreground">
+    <footer className="mt-24 bg-[rgb(126,0,62)] text-primary-foreground">
       <div className="mx-auto max-w-7xl px-5 md:px-8 py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2">
           <div className="flex items-center gap-3">

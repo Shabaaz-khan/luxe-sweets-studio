@@ -1,7 +1,6 @@
 import { useCart } from "@/context/CartContext";
 import { SITE } from "@/lib/site";
-import { createOrder } from "@/api/api";
-import { verifyPayment } from "@/api/api";
+import { createOrder, verifyPayment, createAddress, } from "@/api/api";
 import { loadRazorpay } from "@/lib/loadRazorpay";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
@@ -80,14 +79,25 @@ if (!/\S+@\S+\.\S+/.test(address.email)) {
 
 const payload = {
 
-  customer: {
-    name: `${address.firstName} ${address.lastName}`,
-    email: address.email,
-    phone: address.phone,
-    address: `${address.address1}, ${address.address2}, ${address.landmark}`,
-    city: address.city,
-    pincode: address.pincode,
-  },
+customer: {
+  firstName: address.firstName,
+  lastName: address.lastName,
+
+  name: `${address.firstName} ${address.lastName}`,
+
+  email: address.email,
+  phone: address.phone,
+
+  address1: address.address1,
+  address2: address.address2,
+  landmark: address.landmark,
+
+  address: `${address.address1}, ${address.address2}, ${address.landmark}`,
+
+  city: address.city,
+  state: address.state,
+  pincode: address.pincode,
+},
 
   couponCode: coupon?.code ?? null,
 
@@ -138,25 +148,36 @@ const options = {
   handler: async function (response: any) {
 
     try {
+await verifyPayment({
+  razorpay_order_id: response.razorpay_order_id,
+  razorpay_payment_id: response.razorpay_payment_id,
+  razorpay_signature: response.razorpay_signature,
+  internal_order_id: order.internal_order_id,
+});
 
-      await verifyPayment({
+// Save address if user selected the checkbox
+if (address.saveAddress) {
+  await createAddress({
+    firstName: address.firstName,
+    lastName: address.lastName,
+    phone: address.phone,
+    email: address.email,
+    address1: address.address1,
+    address2: address.address2,
+    landmark: address.landmark,
+    city: address.city,
+    state: address.state,
+    pincode: address.pincode,
+    label: "Home",
+    isDefault: false,
+  });
+}
 
-        razorpay_order_id: response.razorpay_order_id,
+toast.success("Payment successful");
 
-        razorpay_payment_id: response.razorpay_payment_id,
-
-        razorpay_signature: response.razorpay_signature,
-
-        internal_order_id: order.internal_order_id,
-
-      });
-
-      toast.success("Payment successful");
-
-      navigate({
-        to: "/",
-      });
-
+navigate({
+  to: "/",
+});
     } catch (err) {
 
       console.error(err);

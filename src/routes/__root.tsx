@@ -111,10 +111,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Premium artisanal Indian sweets and savouries.",
       },
     ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
-    ],
+links: [
+  { rel: "stylesheet", href: appCss },
+  {
+    rel: "icon",
+    href: "/logo.jpg",
+    type: "image/jpg",
+  },
+]
   }),
   shellComponent: RootShell,
   component: RootComponent,

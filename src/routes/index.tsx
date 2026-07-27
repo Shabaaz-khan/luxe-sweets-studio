@@ -11,6 +11,7 @@ import { ProductCard } from "@/components/site/ProductCard";
 import { Reveal, RevealStagger, revealItem } from "@/components/site/Reveal";
 import { useEffect, useState } from "react";
 import { getCategories, getProducts,  getHomePage,} from "@/api/api";
+import FloatingVideo from "@/components/site/FloatingVideo";
 // import corporateImg from "@/assets/corporate-gift.jpg";
 // import heroPlate from "@/assets/hero-plate.jpg";
 import { Sparkles, Leaf, Award, Truck } from "lucide-react";
@@ -36,8 +37,7 @@ function CinematicStory({
   return (
     <section
       ref={ref}
-      className="relative h-[110vh] overflow-hidden bg-velvet text-cream"
-    >
+className="relative h-[110vh] overflow-hidden bg-[rgb(126,0,62)] text-cream"    >
       <motion.div style={{ y, scale }} className="absolute inset-0">
         <img
           src={story.image}
@@ -155,12 +155,18 @@ const featured = home.signature?.category
   return (
     <div className="min-h-screen">
       <Nav />
+          {home?.floatingVideo?.enabled && (
+      <FloatingVideo
+        video={home.floatingVideo.videoUrl}
+        position={home.floatingVideo.position}
+      />
+    )}
       <main>
        <Hero3D hero={home.hero} />
         <Marquee items={home.marquee.items} />
 
         {/* Values strip */}
-        <section className="border-b border-border bg-cream/60 backdrop-blur">
+        <section className="border-b border-border bg-[oklch(0.97_0.07_96.58)] backdrop-blur">
           <RevealStagger className="mx-auto max-w-7xl px-5 md:px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { Icon: Leaf, label: "Pure ghee, no palm oil" },
@@ -280,7 +286,7 @@ const featured = home.signature?.category
         {/* Corporate strip */}
         <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
           <Reveal y={60}>
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-burgundy text-primary-foreground p-8 md:p-14 grid md:grid-cols-2 gap-10 items-center shadow-luxe">
+            <div className="relative overflow-hidden rounded-3xl bg-[rgb(126,0,62)] text-primary-foreground p-8 md:p-14 grid md:grid-cols-2 gap-10 items-center shadow-luxe">
               <div className="absolute inset-0 bg-damask opacity-30 pointer-events-none" />
               <div className="relative">
                 <div className="text-[11px] tracking-[0.3em] uppercase text-gold-soft">
@@ -325,7 +331,39 @@ const featured = home.signature?.category
             </div>
           </Reveal>
         </section>
+{/* Video Testimonials */}
 
+<section className="mx-auto max-w-7xl px-5 md:px-8 py-24">
+  <SectionHeading
+    eyebrow="Customer Stories"
+    title="Watch Our Happy Customers"
+    subtitle="Real experiences shared by our customers."
+    align="center"
+  />
+
+  <div className="mt-12 grid gap-8 md:grid-cols-3">
+    {home.videoTestimonials.map((video: any) => (
+      <div key={video._id} className="rounded-2xl overflow-hidden border bg-card shadow-soft">
+<video
+  src={video.videoUrl}
+  autoPlay
+  muted
+  loop
+  playsInline
+  controls
+  className="w-full h-64 rounded-2xl object-cover"
+/>
+
+        <div className="p-4">
+          <h4 className="font-semibold">{video.name}</h4>
+          <p className="text-sm text-muted-foreground">
+            {video.designation}
+          </p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
         {/* Testimonials */}
 <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
   <Reveal>

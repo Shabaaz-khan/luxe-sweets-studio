@@ -57,7 +57,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
       {/* Deep burgundy backdrop panel */}
       <motion.div
         style={{ y: bgScrollY, scale: bgScale }}
-        className="pointer-events-none absolute inset-x-4 md:inset-x-10 top-20 bottom-10 rounded-[2.5rem] bg-velvet bg-damask shadow-luxe"
+        className="pointer-events-none absolute inset-x-4 md:inset-x-10 top-20 bottom-10 rounded-[2.5rem] bg-[rgb(126,0,62)] bg-damask shadow-luxe"
       >
         <div className="absolute inset-0 rounded-[2.5rem] ring-1 ring-inset ring-gold/20" />
         <div className="absolute inset-3 rounded-[2.25rem] ring-1 ring-inset ring-gold/10" />
@@ -144,7 +144,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
           >
             <Link
               to={hero.primaryButtonLink}
-              className="btn-luxe group inline-flex items-center gap-3 rounded-full bg-gold text-primary pl-7 pr-2 py-2 text-sm font-semibold tracking-wide shadow-luxe hover:bg-gold-soft transition-colors"
+              className="btn-luxe group inline-flex items-center gap-3 rounded-full bg-[oklch(0.95_0.05_74.43)] text-primary pl-7 pr-2 py-2 text-sm font-semibold tracking-wide shadow-luxe hover:bg-gold-soft transition-colors"
             >
               {hero.primaryButtonText}
               <span className="grid place-items-center w-10 h-10 rounded-full bg-primary text-gold group-hover:translate-x-0.5 transition-transform">
