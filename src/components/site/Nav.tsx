@@ -10,18 +10,21 @@ import {
   LogOut,
   Menu,
   X,
+   Search,
 } from "lucide-react";
 import { useSettings } from "@/context/SettingsContext";
 import { useCustomerAuth } from "@/context/CustomerAuthContext";
 import { toast } from "sonner";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-
+import { getProducts, getCategories } from "@/api/api"
+import { HeaderSearch } from "@/components/site/HeaderSearch";
 const navLinks = [
   { to: "/", label: "Home" },
-  { to: "/corporate", label: "Orders" },
+  { to: "/gifting", label: "Gifting" },
   { to: "/about", label: "Saatviks Story" },
   { to: "/contact", label: "Contact" },
+  { to: "/careers", label: "Careers" },
 ];
 
 export function Nav() {
@@ -42,9 +45,30 @@ export function Nav() {
   const [showMenu, setShowMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
+const [showSearch, setShowSearch] = useState(false);
+const [search, setSearch] = useState("");
+const [products, setProducts] = useState([]);
+const [categories, setCategories] = useState([]);
   const menuRef = useRef<HTMLDivElement>(null);
+useEffect(() => {
+  async function loadSearchData() {
+    try {
+      const [productRes, categoryRes] = await Promise.all([
+        getProducts(),
+        getCategories(),
+      ]);
 
+      console.log("Products Response:", productRes);
+
+      setProducts(productRes);
+      setCategories(categoryRes);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  loadSearchData();
+}, []);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
@@ -77,8 +101,21 @@ export function Nav() {
 
 
   const light = !scrolled; // sitting over dark burgundy hero at top
+const keyword = search.trim().toLowerCase();
 
+const filteredProducts = keyword
+  ? products.filter((item: any) =>
+      item.name.toLowerCase().includes(keyword)
+    )
+  : [];
+
+const filteredCategories = keyword
+  ? categories.filter((item: any) =>
+      item.name.toLowerCase().includes(keyword)
+    )
+  : [];
   return (
+    <>
     <header
       className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 ${scrolled
           ? "backdrop-blur-md bg-[oklch(0.97_0.07_96.58)] border-b border-border shadow-soft"
@@ -146,7 +183,12 @@ export function Nav() {
   ))}
 </nav>
         <div className="hidden md:flex items-center gap-4">
-
+<button
+  onClick={() => setShowSearch(true)}
+  className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-muted transition"
+>
+  <Search className="h-5 w-5 text-primary" />
+</button>
           {isAuthenticated ? (
             <div className="relative" ref={menuRef}>
               <button
@@ -219,15 +261,14 @@ export function Nav() {
               </span>
             )}
           </button>
-          <Link
-            to="/menu"
-            search={{
-              category: "all",
-            }}
-            className="inline-flex items-center gap-2 rounded-full bg-[rgb(126,0,62)] text-primary-foreground px-5 py-2.5 text-sm"
-          >
-            Order Now
-          </Link>
+<Link
+  to="/menu"
+  search={{
+    category: "all",
+  }}
+className="inline-flex items-center gap-2 rounded-full bg-[rgb(126,0,62)] text-primary-foreground px-5 py-2.5 text-sm transition-all duration-300 hover:bg-[rgb(100,0,50)] hover:scale-105">
+  Order Now
+</Link>
 
         </div>
 
@@ -319,5 +360,17 @@ export function Nav() {
         </div>
       </div>
     </header>
+    <HeaderSearch
+  open={showSearch}
+  onClose={() => {
+    setShowSearch(false);
+    setSearch("");
+  }}
+  search={search}
+  setSearch={setSearch}
+  products={products}
+  categories={categories}
+/>
+ </>
   );
 }

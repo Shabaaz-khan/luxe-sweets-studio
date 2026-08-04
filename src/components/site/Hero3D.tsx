@@ -53,7 +53,10 @@ const words = (hero.titleLine1 || "").split(" ");
 const words2 = (hero.titleLine2 || "").split(" ");
 
   return (
-    <section ref={containerRef} className="relative min-h-[92vh] pt-24 md:pt-28 pb-20 overflow-hidden">
+<section
+  ref={containerRef}
+  className="relative min-h-[760px] md:min-h-[92vh] pt-16 md:pt-28 pb-10 md:pb-20 overflow-hidden"
+>
       {/* Deep burgundy backdrop panel */}
       <motion.div
         style={{ y: bgScrollY, scale: bgScale }}
@@ -85,9 +88,13 @@ const words2 = (hero.titleLine2 || "").split(" ");
         />
       ))}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 pt-10 md:pt-0 grid lg:grid-cols-12 gap-10 items-center">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 md:px-12 pt-8 md:pt-0 grid lg:grid-cols-12 gap-6 md:gap-10 items-center">
         {/* Text column */}
-        <motion.div style={{ y: textScrollY }} className="lg:col-span-6 text-cream">
+       
+<motion.div
+  style={{ y: textScrollY }}
+  className="order-2 lg:order-1 lg:col-span-6 text-cream"
+>
 <motion.div
   initial={{ opacity: 0, y: 20 }}
   animate={{ opacity: 1, y: 0 }}
@@ -98,7 +105,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
   Est. {hero.badgeYear} · Handcrafted daily
 </motion.div>
 
-          <h1 className="mt-7 font-display text-[3.2rem] leading-[1.02] md:text-7xl lg:text-[5.5rem] text-cream text-balance">
+          <h1 className="mt-5 md:mt-7 font-display text-[2.2rem] sm:text-[2.8rem] leading-[1.05] md:text-7xl lg:text-[5.5rem] text-cream text-balance">
             <span className="block">
               {words.map((w: string, i: number) => (
                 <motion.span
@@ -131,7 +138,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.2 }}
-            className="mt-8 max-w-xl text-lg text-cream/75 leading-relaxed"
+            className="mt-5 md:mt-8 max-w-xl text-[15px] md:text-lg text-cream/75 leading-7 md:leading-relaxed"
           >
             {hero.description}
           </motion.p>
@@ -140,7 +147,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 1.35 }}
-            className="mt-10 flex flex-wrap items-center gap-4"
+            className="mt-6 md:mt-10 flex flex-wrap items-center gap-3 md:gap-4"
           >
             <Link
               to={hero.primaryButtonLink}
@@ -163,15 +170,15 @@ const words2 = (hero.titleLine2 || "").split(" ");
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 1.6 }}
-            className="mt-14 grid grid-cols-3 gap-6 max-w-md"
+           className="hidden md:grid mt-14 grid-cols-3 gap-6 max-w-md"
           >
  {hero.stats.map((s: any) => (
     <div key={s.label}>
-      <div className="font-display text-3xl md:text-4xl text-gold">
+      <div className="font-display text-2xl md:text-4xl text-gold">
         {s.number}
       </div>
 
-      <div className="mt-1 text-[10px] tracking-widest uppercase text-cream/60">
+      <div className="mt-1 text-[9px] md:text-[10px] tracking-widest uppercase text-cream/60">
         {s.label}
       </div>
     </div>
@@ -179,8 +186,8 @@ const words2 = (hero.titleLine2 || "").split(" ");
           </motion.div>
         </motion.div>
 
-        {/* 3D stage */}
-        <div className="lg:col-span-6 relative h-[460px] md:h-[600px] [perspective:1600px]">
+       {/* 3D stage */}
+<div className="order-1 lg:order-2 lg:col-span-6 relative h-[260px] sm:h-[340px] md:h-[600px] [perspective:1600px]">
           <motion.div
             style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d", y: plateScrollY }}
             className="absolute inset-0"
@@ -234,7 +241,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
             {/* Floating card 1 */}
             <motion.div
               style={{ x: card1X, y: card1Y }}
-              className="absolute -left-1 md:left-2 bottom-8 md:bottom-16 w-40 md:w-48 rounded-2xl overflow-hidden shadow-luxe rotate-[-8deg] animate-float-slow border-2 border-cream"
+              className="hidden md:block absolute -left-1 md:left-2 bottom-8 md:bottom-16 w-40 md:w-48 rounded-2xl overflow-hidden shadow-luxe rotate-[-8deg] animate-float-slow border-2 border-cream"
             >
               <img src={hero.card1.image}alt="Rose gulab jamun" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
               <div className="p-3 bg-cream/95 backdrop-blur">
@@ -246,7 +253,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
             {/* Floating card 2 */}
             <motion.div
               style={{ x: card2X, y: card2Y }}
-              className="absolute right-0 bottom-2 md:bottom-6 w-40 md:w-52 rounded-2xl overflow-hidden shadow-luxe rotate-[7deg] animate-float-med border-2 border-cream"
+              className="hidden md:block absolute right-0 bottom-2 md:bottom-6 w-40 md:w-52 rounded-2xl overflow-hidden shadow-luxe rotate-[7deg] animate-float-med border-2 border-cream"
             >
               <img src={hero.card2.image}alt="Traditional namkeen mix" loading="lazy" className="w-full h-32 md:h-40 object-cover" width={800} height={800} />
               <div className="p-3 bg-cream/95 backdrop-blur">
@@ -258,7 +265,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
             {/* Gold "Since 1962" badge */}
             <motion.div
               style={{ x: card2X, y: card1Y }}
-              className="absolute -right-2 md:right-4 top-24 md:top-32 w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-gold text-primary grid place-items-center rotate-12 shadow-luxe animate-float-tilt"
+             className="hidden md:grid absolute -right-2 md:right-4 top-24 md:top-32 w-24 h-24 md:w-32 md:h-32 rounded-full bg-gradient-gold text-primary grid place-items-center rotate-12 shadow-luxe animate-float-tilt"
             >
               <div className="text-center leading-tight">
                 <div className="text-[9px] tracking-[0.28em] uppercase">Since</div>
@@ -271,7 +278,7 @@ const words2 = (hero.titleLine2 || "").split(" ");
       </div>
 
       {/* Scroll cue */}
-      <div className="absolute left-1/2 bottom-6 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/60 z-10">
+      <div className="hidden md:flex absolute left-1/2 bottom-6 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/60 z-10">
         <span className="text-[10px] tracking-[0.3em] uppercase">Scroll</span>
         <div className="w-px h-10 bg-gradient-to-b from-gold to-transparent" />
       </div>

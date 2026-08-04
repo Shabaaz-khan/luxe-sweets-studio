@@ -53,7 +53,10 @@ type CartContextType = {
   applyCoupon: (coupon: AppliedCoupon) => void;
 
   removeCoupon: () => void;
-
+removeItem: (
+  productId: string,
+  weight: string
+) => void;
   addToCart: (
     product: Product,
     variant: Variant,
@@ -202,6 +205,22 @@ const changeVariant = (
   );
   setCoupon(null);
 };
+const removeItem = (
+  productId: string,
+  weight: string
+) => {
+  setCart((current) =>
+    current.filter(
+      (item) =>
+        !(
+          item.product._id === productId &&
+          item.selectedVariant.weight === weight
+        )
+    )
+  );
+
+  setCoupon(null);
+};
 const applyCoupon = (couponData: AppliedCoupon) => {
   setCoupon(couponData);
 };
@@ -229,7 +248,7 @@ const checkout = () => {
 
     applyCoupon,
     removeCoupon,
-
+removeItem,
     addToCart,
     setQty,
     changeVariant,

@@ -11,6 +11,9 @@ import { CartProvider, useCart } from "@/context/CartContext";
 import { SettingsProvider } from "@/context/SettingsContext";
 import { CustomerAuthProvider } from "@/context/CustomerAuthContext";
 import { useEffect, type ReactNode } from "react";
+import { LoadingProvider, useLoading } from "@/context/LoadingContext";
+import { registerLoader } from "@/lib/loadingService";
+import PageLoader from "@/components/site/PageLoader";
 import CartDrawer from "@/components/site/CartDrawer";
 import "@fontsource/cormorant-garamond/400.css";
 import "@fontsource/cormorant-garamond/500.css";
@@ -145,6 +148,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <LoadingProvider>
   <SettingsProvider>
     <CartProvider>
       <CustomerAuthProvider>
@@ -152,6 +156,7 @@ function RootComponent() {
       </CustomerAuthProvider>
     </CartProvider>
   </SettingsProvider>
+  </LoadingProvider>
     </QueryClientProvider>
   );
 }
@@ -163,11 +168,18 @@ function AppContent() {
     subtotal,
     setQty,
     changeVariant,
+      removeItem,
     checkout,
   } = useCart();
+  const { loading, showLoader, hideLoader } = useLoading();
+
+  useEffect(() => {
+    registerLoader(showLoader, hideLoader);
+  }, [showLoader, hideLoader]);
 
   return (
     <>
+    {loading && <PageLoader />}
       {/* <SmoothScroll /> */}
 
       <Outlet />
@@ -178,6 +190,7 @@ function AppContent() {
         cartItems={cartItems}
         subtotal={subtotal}
         setQty={setQty}
+        removeItem={removeItem}
         changeVariant={changeVariant}
         checkout={checkout}
       />

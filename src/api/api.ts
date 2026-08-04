@@ -18,8 +18,8 @@ export const getProducts = async () => {
   return data;
 };
 
-export const getProduct = async (id: string) => {
-  const { data } = await api.get(`/products/${id}`);
+export const getProduct = async (slug: string) => {
+  const { data } = await api.get(`/products/${slug}`);
   return data;
 };
 // Coupons

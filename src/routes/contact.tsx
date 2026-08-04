@@ -34,17 +34,17 @@ if (!page) return null; // or a loading spinner
     className="absolute inset-0 h-full w-full object-cover"
   />
 
-  <div className="absolute inset-0 bg-black/40" />
+  <div className="absolute inset-0 " />
 
   <div className="relative z-10 flex h-full items-center justify-center">
     <div className="text-center text-white">
-      <h1 className="text-5xl font-bold">
+      {/* <h1 className="text-5xl font-bold">
         {page.hero.title}
       </h1>
 
       <p className="mt-4 text-lg">
         {page.hero.subtitle}
-      </p>
+      </p> */}
     </div>
   </div>
 </section>

@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Minus, Plus, X } from "lucide-react";
+import { Minus, Plus,Trash2, X } from "lucide-react";
 import { API_URL } from "@/lib/config";
 import { SITE } from "@/lib/site";
 import type { CartItem } from "@/context/CartContext";
@@ -18,6 +18,12 @@ type CartDrawerProps = {
     productId: string,
     weight: string
   ) => void;
+
+  removeItem: (
+    productId: string,
+    weight: string
+  ) => void;
+
   checkout: () => void;
 };
 
@@ -28,9 +34,12 @@ export default function CartDrawer({
   subtotal,
   setQty,
   changeVariant,
+  removeItem,
   checkout,
-}: CartDrawerProps) {
+}: CartDrawerProps)
+{
   const navigate = useNavigate();
+  
   return (
     <AnimatePresence>
       {open && (
@@ -83,29 +92,31 @@ export default function CartDrawer({
                   className="rounded-xl bg-card border border-border p-4"
                 >
                   {/* Product */}
-                  <div className="flex gap-4">
-                  <img
-  src={i.product.imageUrl}
-  alt={i.product.name}
-                      className="w-20 h-20 rounded-lg object-cover"
-                    />
+<div className="flex gap-4 flex-1">
+  <img
+    src={i.product.imageUrl}
+    alt={i.product.name}
+    className="w-20 h-20 rounded-lg object-cover"
+  />
 
-                    <div className="flex-1">
-                      <h3 className="font-display text-lg text-primary">
-                        {i.product.name}
-                      </h3>
+  <div className="flex-1">
+    <h3 className="font-display text-lg text-primary">
+      {i.product.name}
+    </h3>
 
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Selected :
-                        <span className="ml-1 font-medium text-primary">
-                          {i.selectedVariant.weight}
-                        </span>
-                        {" • "}
-                        {SITE.currency}
-                        {i.selectedVariant.price}
-                      </p>
-                    </div>
-                  </div>
+    <p className="text-sm text-muted-foreground mt-1">
+      Selected :
+      <span className="ml-1 font-medium text-primary">
+        {i.selectedVariant.weight}
+      </span>
+      {" • "}
+      {SITE.currency}
+      {i.selectedVariant.price}
+    </p>
+  </div>
+</div>
+
+
 
                   {/* Weight Selection */}
 <div className="mt-6">
@@ -186,8 +197,22 @@ export default function CartDrawer({
                       >
                         <Plus size={16} />
                       </button>
-                    </div>
 
+                    </div>
+                      <div>
+                      <button
+  type="button"
+  onClick={() =>
+    removeItem(
+      i.product._id,
+      i.selectedVariant.weight
+    )
+  }
+  className="h-10 w-10 rounded-full border border-red-200 text-red-500 hover:bg-red-50 hover:border-red-500 transition-all flex items-center justify-center"
+>
+  <Trash2 size={18} />
+</button>
+</div>
                     <div className="text-right">
                       <p className="text-xs text-muted-foreground">
                         Total

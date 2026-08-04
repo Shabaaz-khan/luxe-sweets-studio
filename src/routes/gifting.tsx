@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-
+import CorporateShowcase from "@/components/site/CorporateShowcase";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { SectionHeading } from "@/components/site/SectionHeading";
@@ -15,7 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-export const Route = createFileRoute("/corporate")({
+export const Route = createFileRoute("/gifting")({
   head: () => ({
     meta: [
       {
@@ -68,9 +68,9 @@ function CorporatePage() {
     <div className="min-h-screen">
       <Nav />
 
-      <main className="pt-28 md:pt-36">
+      <main className="pt-28 md:pt-16">
 
-        <section className="mx-auto max-w-7xl px-5 md:px-8 grid lg:grid-cols-2 gap-12 items-center">
+        {/* <section className="mx-auto max-w-7xl px-5 md:px-8 grid lg:grid-cols-2 gap-12 items-center">
 
           <div>
 
@@ -123,13 +123,19 @@ function CorporatePage() {
             />
           </motion.div>
 
-        </section>
+        </section> */}
+<section className=" py-10">
+<CorporateShowcase showcase={page.showcase} />
+</section>
+ <section className="mx-auto max-w-4xl px-5 md:px-8 py-24">
 
-        <section className="mx-auto max-w-4xl px-5 md:px-8 py-24">
+  <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
 
-          <CorporateInquiryForm page={page} />
+    <CorporateInquiryForm page={page} />
 
-        </section>
+  </div>
+
+</section>
 
       </main>
 

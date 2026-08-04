@@ -1,5 +1,9 @@
 import axios from "axios";
 import { getCustomerToken } from "@/lib/customerToken";
+import {
+  startLoading,
+  stopLoading,
+} from "@/lib/loadingService";
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}/api`,
@@ -8,14 +12,33 @@ const api = axios.create({
   },
 });
 
-api.interceptors.request.use((config) => {
-  const token = getCustomerToken();
+api.interceptors.request.use(
+  (config) => {
+    startLoading();
 
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    const token = getCustomerToken();
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    stopLoading();
+    return Promise.reject(error);
   }
+);
 
-  return config;
-});
+api.interceptors.response.use(
+  (response) => {
+    stopLoading();
+    return response;
+  },
+  (error) => {
+    stopLoading();
+    return Promise.reject(error);
+  }
+);
 
 export default api;

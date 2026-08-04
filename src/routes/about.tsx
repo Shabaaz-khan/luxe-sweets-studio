@@ -73,65 +73,119 @@ if (!page) return null;
   return (
     <div className="min-h-screen">
       <Nav />
-      <main className="pt-28 md:pt-36">
+      <main className="pt-24 md:pt-26">
 
 
-        <section className="mx-auto max-w-7xl px-5 md:px-8 mt-16 grid lg:grid-cols-2 gap-14 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="relative"
-          >
-            <div className="absolute -inset-6 bg-gradient-gold opacity-15 blur-3xl rounded-3xl" />
-<div className="relative rounded-3xl overflow-hidden border border-gold/25 shadow-luxe aspect-video">
+<section className="w-full">
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    transition={{ duration: 0.7 }}
+     className="relative overflow-hidden"
+  >
+  <div className="absolute inset-0 bg-gradient-gold opacity-15 blur-3xl rounded-3xl" />
 
- {page.videoFile ? (
-<video
-  className="w-full h-full object-cover"
-  autoPlay
-  muted
-  loop
-  playsInline
-  controls={false}
-  disablePictureInPicture
-  controlsList="nodownload noplaybackrate noremoteplayback"
-  onContextMenu={(e) => e.preventDefault()}
->
-  <source src={page.videoFile} type="video/mp4" />
-</video>
-) : page.videoUrl ? (
-  <iframe
-    className="w-full h-full"
-    src={getYoutubeEmbedUrl(page.videoUrl)}
-    title="About Video"
-    allowFullScreen
+<div className="relative w-full h-[70vh] overflow-hidden">
+        {page.videoFile ? (
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          controls={false}
+          disablePictureInPicture
+          controlsList="nodownload noplaybackrate noremoteplayback"
+          onContextMenu={(e) => e.preventDefault()}
+        >
+          <source src={page.videoFile} type="video/mp4" />
+        </video>
+      ) : page.videoUrl ? (
+        <iframe
+          className="w-full h-full"
+          src={getYoutubeEmbedUrl(page.videoUrl)}
+          title="About Video"
+          allowFullScreen
+        />
+      ) : null}
+    </div>
+  </motion.div>
+</section>
+<section className="mx-auto max-w-7xl px-5 md:px-8 mt-16">
+  <SectionHeading
+    eyebrow={page.eyebrow}
+    title={page.title}
+    subtitle={page.subtitle}
   />
-) : null}
 
-</div>
-        <section className="mx-auto max-w-7xl px-5 md:px-8">
-<SectionHeading
-  eyebrow={page.eyebrow}
-  title={page.title}
-  subtitle={page.subtitle}
-/>
-        </section>
-          </motion.div>
-          <div className="space-y-6 text-foreground/80 leading-relaxed">
-   <p className="text-xl font-display text-primary">
-  {page.quote}
-</p>
-<p>
-  {page.story1}
-</p>
-<p>
-  {page.story2}
-</p>
+  <div className="mt-10 max-w-4xl space-y-6 text-foreground/80 leading-relaxed">
+    <p className="text-xl font-display text-primary">
+      {page.quote}
+    </p>
+
+    <p>{page.story1}</p>
+
+    <p>{page.story2}</p>
+  </div>
+</section>
+        {/* Team Members */}
+{page.team?.length > 0 && (
+  <section className="mx-auto max-w-7xl px-5 md:px-8 mt-24 mb-24">
+    <SectionHeading
+      eyebrow="Our Leadership"
+      title="Meet Our Team"
+      subtitle="The passionate people who carry forward the legacy of Saatvik Sweets & Savouries."
+    />
+
+    <div className="mt-14 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      {page.team.map((member: any, index: number) => (
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{
+            duration: 0.5,
+            delay: index * 0.1,
+          }}
+          className="group overflow-hidden rounded-3xl border border-border bg-card shadow-soft hover:-translate-y-2 hover:shadow-xl transition-all duration-300"
+        >
+          {/* Top Banner */}
+          <div className="h-24 bg-gradient-gold" />
+
+          {/* Profile Image */}
+          <div className="-mt-14 flex justify-center">
+            <div className="rounded-full bg-white p-2 shadow-lg">
+              <img
+                src={member.image}
+                alt={member.name}
+                className="h-28 w-28 rounded-full object-cover"
+              />
+            </div>
           </div>
-        </section>
 
+          {/* Content */}
+          <div className="px-8 pb-8 pt-5 text-center">
+            <h3 className="font-display text-2xl text-primary">
+              {member.name}
+            </h3>
+
+            <p className="mt-1 text-sm font-semibold uppercase tracking-wider text-gold">
+              {member.designation}
+            </p>
+
+            <div className="mx-auto mt-5 h-1 w-16 rounded-full bg-primary" />
+
+            <p className="mt-6 text-foreground/70 leading-7">
+              {member.description}
+            </p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  </section>
+)}
         <section className="mx-auto max-w-7xl px-5 md:px-8 mt-24 grid md:grid-cols-3 gap-6">
  {page.timeline?.map((s: any, i: number) => (
             <motion.div
@@ -148,6 +202,7 @@ if (!page) return null;
             </motion.div>
           ))}
         </section>
+
       </main>
       <Footer />
     </div>

@@ -86,7 +86,7 @@ export default function CorporateInquiryForm({ page }: Props) {
   };
 
   return (
-    <div className="p-6 md:p-12">
+    <div className="p-6 md:p-12 bg-white">
 
       {submitted ? (
 
@@ -217,7 +217,7 @@ export default function CorporateInquiryForm({ page }: Props) {
                 rows={4}
                 maxLength={1200}
                 placeholder="Branding requirements, delivery locations, custom packaging..."
-                className="mt-2 w-full rounded-xl bg-background border border-input px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="mt-2 w-full rounded-xl border border-input px-4 py-3 outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
               />
 
               {errors.message && (
@@ -293,18 +293,28 @@ function Field({
 
       </label>
 
-      <input
-        id={name}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        aria-invalid={!!error}
-        className={`mt-2 w-full rounded-xl bg-background border px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 ${
-          error
-            ? "border-destructive"
-            : "border-input focus:border-primary"
-        }`}
-      />
+<input
+  id={name}
+  name={name}
+  type={type}
+  placeholder={placeholder}
+  aria-invalid={!!error}
+  onClick={(e) => {
+    if (type === "date") {
+      (e.currentTarget as HTMLInputElement).showPicker?.();
+    }
+  }}
+  onFocus={(e) => {
+    if (type === "date") {
+      (e.currentTarget as HTMLInputElement).showPicker?.();
+    }
+  }}
+  className={`mt-2 w-full rounded-xl  border px-4 py-3 outline-none focus:ring-2 focus:ring-primary/20 ${
+    error
+      ? "border-destructive"
+      : "border-input focus:border-primary"
+  }`}
+/>
 
       {error && (
         <p className="mt-1 text-xs text-destructive">

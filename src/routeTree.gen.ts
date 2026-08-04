@@ -14,15 +14,17 @@ import { Route as SuccessRouteImport } from './routes/success'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as MenuRouteImport } from './routes/menu'
-import { Route as CorporateRouteImport } from './routes/corporate'
+import { Route as GiftingRouteImport } from './routes/gifting'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CareersIndexRouteImport } from './routes/careers/index'
 import { Route as AccountIndexRouteImport } from './routes/account/index'
-import { Route as ProductIdRouteImport } from './routes/product.$id'
+import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
 import { Route as CollectionsSlugRouteImport } from './routes/collections.$slug'
+import { Route as CareersIdRouteImport } from './routes/careers/$id'
 import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
@@ -56,9 +58,9 @@ const MenuRoute = MenuRouteImport.update({
   path: '/menu',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CorporateRoute = CorporateRouteImport.update({
-  id: '/corporate',
-  path: '/corporate',
+const GiftingRoute = GiftingRouteImport.update({
+  id: '/gifting',
+  path: '/gifting',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -86,19 +88,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CareersIndexRoute = CareersIndexRouteImport.update({
+  id: '/careers/',
+  path: '/careers/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountIndexRoute = AccountIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AccountRoute,
 } as any)
-const ProductIdRoute = ProductIdRouteImport.update({
-  id: '/product/$id',
-  path: '/product/$id',
+const ProductsSlugRoute = ProductsSlugRouteImport.update({
+  id: '/products/$slug',
+  path: '/products/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CollectionsSlugRoute = CollectionsSlugRouteImport.update({
   id: '/collections/$slug',
   path: '/collections/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CareersIdRoute = CareersIdRouteImport.update({
+  id: '/careers/$id',
+  path: '/careers/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
@@ -143,7 +155,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/corporate': typeof CorporateRoute
+  '/gifting': typeof GiftingRoute
   '/menu': typeof MenuRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -156,16 +168,18 @@ export interface FileRoutesByFullPath {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/careers/$id': typeof CareersIdRoute
   '/collections/$slug': typeof CollectionsSlugRoute
-  '/product/$id': typeof ProductIdRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/account/': typeof AccountIndexRoute
+  '/careers/': typeof CareersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/corporate': typeof CorporateRoute
+  '/gifting': typeof GiftingRoute
   '/menu': typeof MenuRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -178,9 +192,11 @@ export interface FileRoutesByTo {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/careers/$id': typeof CareersIdRoute
   '/collections/$slug': typeof CollectionsSlugRoute
-  '/product/$id': typeof ProductIdRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/account': typeof AccountIndexRoute
+  '/careers': typeof CareersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,7 +205,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRouteWithChildren
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
-  '/corporate': typeof CorporateRoute
+  '/gifting': typeof GiftingRoute
   '/menu': typeof MenuRoute
   '/privacy': typeof PrivacyRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -202,9 +218,11 @@ export interface FileRoutesById {
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
   '/auth/reset-password': typeof AuthResetPasswordRoute
+  '/careers/$id': typeof CareersIdRoute
   '/collections/$slug': typeof CollectionsSlugRoute
-  '/product/$id': typeof ProductIdRoute
+  '/products/$slug': typeof ProductsSlugRoute
   '/account/': typeof AccountIndexRoute
+  '/careers/': typeof CareersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,7 +232,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/checkout'
     | '/contact'
-    | '/corporate'
+    | '/gifting'
     | '/menu'
     | '/privacy'
     | '/sitemap.xml'
@@ -227,16 +245,18 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/careers/$id'
     | '/collections/$slug'
-    | '/product/$id'
+    | '/products/$slug'
     | '/account/'
+    | '/careers/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/checkout'
     | '/contact'
-    | '/corporate'
+    | '/gifting'
     | '/menu'
     | '/privacy'
     | '/sitemap.xml'
@@ -249,9 +269,11 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/careers/$id'
     | '/collections/$slug'
-    | '/product/$id'
+    | '/products/$slug'
     | '/account'
+    | '/careers'
   id:
     | '__root__'
     | '/'
@@ -259,7 +281,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/checkout'
     | '/contact'
-    | '/corporate'
+    | '/gifting'
     | '/menu'
     | '/privacy'
     | '/sitemap.xml'
@@ -272,9 +294,11 @@ export interface FileRouteTypes {
     | '/auth/login'
     | '/auth/register'
     | '/auth/reset-password'
+    | '/careers/$id'
     | '/collections/$slug'
-    | '/product/$id'
+    | '/products/$slug'
     | '/account/'
+    | '/careers/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -283,7 +307,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRouteWithChildren
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
-  CorporateRoute: typeof CorporateRoute
+  GiftingRoute: typeof GiftingRoute
   MenuRoute: typeof MenuRoute
   PrivacyRoute: typeof PrivacyRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -293,8 +317,10 @@ export interface RootRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
   AuthResetPasswordRoute: typeof AuthResetPasswordRoute
+  CareersIdRoute: typeof CareersIdRoute
   CollectionsSlugRoute: typeof CollectionsSlugRoute
-  ProductIdRoute: typeof ProductIdRoute
+  ProductsSlugRoute: typeof ProductsSlugRoute
+  CareersIndexRoute: typeof CareersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -334,11 +360,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MenuRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/corporate': {
-      id: '/corporate'
-      path: '/corporate'
-      fullPath: '/corporate'
-      preLoaderRoute: typeof CorporateRouteImport
+    '/gifting': {
+      id: '/gifting'
+      path: '/gifting'
+      fullPath: '/gifting'
+      preLoaderRoute: typeof GiftingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -376,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/careers/': {
+      id: '/careers/'
+      path: '/careers'
+      fullPath: '/careers/'
+      preLoaderRoute: typeof CareersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account/': {
       id: '/account/'
       path: '/'
@@ -383,11 +416,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountIndexRouteImport
       parentRoute: typeof AccountRoute
     }
-    '/product/$id': {
-      id: '/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: typeof ProductIdRouteImport
+    '/products/$slug': {
+      id: '/products/$slug'
+      path: '/products/$slug'
+      fullPath: '/products/$slug'
+      preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/collections/$slug': {
@@ -395,6 +428,13 @@ declare module '@tanstack/react-router' {
       path: '/collections/$slug'
       fullPath: '/collections/$slug'
       preLoaderRoute: typeof CollectionsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/careers/$id': {
+      id: '/careers/$id'
+      path: '/careers/$id'
+      fullPath: '/careers/$id'
+      preLoaderRoute: typeof CareersIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth/reset-password': {
@@ -472,7 +512,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRouteWithChildren,
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
-  CorporateRoute: CorporateRoute,
+  GiftingRoute: GiftingRoute,
   MenuRoute: MenuRoute,
   PrivacyRoute: PrivacyRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -482,8 +522,10 @@ const rootRouteChildren: RootRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
   AuthResetPasswordRoute: AuthResetPasswordRoute,
+  CareersIdRoute: CareersIdRoute,
   CollectionsSlugRoute: CollectionsSlugRoute,
-  ProductIdRoute: ProductIdRoute,
+  ProductsSlugRoute: ProductsSlugRoute,
+  CareersIndexRoute: CareersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

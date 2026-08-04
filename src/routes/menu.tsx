@@ -59,13 +59,15 @@ type Type = {
   };
 };
 
-type Product = {
+export type Product = {
   _id: string;
   name: string;
   description: string;
   imageUrl: string;
+  badge?: string;
   variants: {
     weight: string;
+     discount: number;
     price: number;
   }[];
   category: {

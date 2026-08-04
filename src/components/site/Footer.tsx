@@ -66,7 +66,7 @@ const socialIcons: any = {
         <div>
           <div className="text-sm tracking-[0.24em] uppercase text-gold-soft mb-4">Visit</div>
           <ul className="space-y-3 text-primary-foreground/80">
-            <li className="flex items-start gap-3"><MapPin size={16} className="mt-1 text-gold" /> {settings.address}</li>
+            <li className="flex items-start gap-3"><MapPin  className="h-[18px] w-[70px] mt-1 text-gold" /> {settings.address}</li>
 {settings.contacts?.map((contact: any, index: number) => (
   <div key={index} className="space-y-1 mb-4">
     <p className="font-semibold text-gold-soft">

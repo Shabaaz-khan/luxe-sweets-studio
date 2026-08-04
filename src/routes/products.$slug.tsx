@@ -4,31 +4,66 @@ import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { getProduct } from "@/api/api";
 import { useCart } from "@/context/CartContext";
-export const Route = createFileRoute("/product/$id")({
+import { Crown } from "lucide-react";
+export const Route = createFileRoute("/products/$slug")({
   component: ProductDetails,
 });
 
 function ProductDetails() {
 
-  const { id } = Route.useParams();
-
+ const { slug } = Route.useParams();
   const [product, setProduct] = useState<any>(null);
 const [selectedVariant, setSelectedVariant] = useState<any>(null);
 const [qty, setQty] = useState(1);
+const [animatedPrice, setAnimatedPrice] = useState(1); // ✅ Move here
+const cheapestVariant =
+  product?.variants?.length
+    ? product.variants.reduce((min: any, current: any) =>
+        (current.discount ?? current.price) <
+        (min.discount ?? min.price)
+          ? current
+          : min
+      )
+    : null;
 const {
   addToCart,
 } = useCart();
   useEffect(() => {
     loadProduct();
-  }, [id]);
+ }, [slug]);
+const animatePrice = (variant: any) => {
+  if (!variant) return;
 
+  const target = variant.discount ?? variant.price;
+
+  let current = 1;
+
+  setAnimatedPrice(1);
+
+  const increment = Math.max(1, Math.ceil(target / 40));
+
+  const timer = setInterval(() => {
+    current += increment;
+
+    if (current >= target) {
+      current = target;
+      clearInterval(timer);
+    }
+
+    setAnimatedPrice(current);
+  }, 25);
+};
   const loadProduct = async () => {
     try {
-      const data = await getProduct(id);
+     const data = await getProduct(slug);
      setProduct(data);
 
 if (data.variants?.length) {
-  setSelectedVariant(data.variants[0]);
+  const firstVariant = data.variants[0];
+
+  setSelectedVariant(firstVariant);
+
+  animatePrice(firstVariant);
 }
     } catch (err) {
       console.error(err);
@@ -42,17 +77,14 @@ if (data.variants?.length) {
       </div>
     );
   }
+
 const handleAddToCart = () => {
   if (!selectedVariant) return;
 
   addToCart(product, selectedVariant, qty);
 };
-const cheapestVariant =
-  product?.variants?.length
-    ? product.variants.reduce((min: any, current: any) =>
-        current.price < min.price ? current : min
-      )
-    : null;
+
+
   return (
     <div className="min-h-screen ">
 
@@ -62,14 +94,24 @@ const cheapestVariant =
 
 <div className="grid lg:grid-cols-2 gap-12">
 
-  <div>
+<div className="relative w-fit mx-auto">
 
-    <img
-      src={product.imageUrl}
-      alt={product.name}
- className="w-[420px] h-[420px] object-cover rounded-3xl shadow-xl mx-auto"    />
+  {product.badge?.trim() && (
+    <div className="absolute left-5 top-5 z-20 inline-flex items-center gap-2 rounded-full bg-[#fff7e8] border border-[#efcf7a] px-4 py-2 shadow-lg">
+      <Crown className="h-4 w-4 text-[#9d6a00]" />
+      <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[#9d6a00]">
+        {product.badge}
+      </span>
+    </div>
+  )}
 
-  </div>
+  <img
+    src={product.imageUrl}
+    alt={product.name}
+    className="w-[420px] h-[420px] object-cover rounded-3xl shadow-xl"
+  />
+
+</div>
 
   <div>
 
@@ -84,15 +126,24 @@ const cheapestVariant =
 
   </div>
 
-  <div className="text-4xl font-display text-primary mt-1">
+<div className="flex items-end gap-3">
 
-    ₹{cheapestVariant?.price}
+  <span className="text-5xl font-display">
+    ₹{animatedPrice.toLocaleString()}
+  </span>
 
-  </div>
+{selectedVariant?.price >
+  (selectedVariant?.discount ?? selectedVariant?.price) && (
+  <span className="text-lg line-through text-muted-foreground">
+    ₹{selectedVariant.price.toLocaleString()}
+  </span>
+)}
+
+</div>
 
   <div className="text-sm text-muted-foreground">
 
-    {cheapestVariant?.weight}
+    {selectedVariant?.weight}
 
   </div>
 
@@ -113,7 +164,10 @@ const cheapestVariant =
         <button
           key={variant.weight}
           type="button"
-          onClick={() => setSelectedVariant(variant)}
+          onClick={() => {
+  setSelectedVariant(variant);
+  animatePrice(variant);
+}}
           className={`min-w-[95px] rounded-2xl px-5 py-4 text-center transition-all duration-300 ${
             active
               ? "bg-primary text-white shadow-lg"
@@ -124,13 +178,13 @@ const cheapestVariant =
             {variant.weight}
           </div>
 
-          <div
+          {/* <div
             className={`mt-1 text-sm ${
               active ? "text-white/90" : "text-muted-foreground"
             }`}
           >
             ₹{variant.price}
-          </div>
+          </div> */}
         </button>
       );
     })}
@@ -172,7 +226,7 @@ const cheapestVariant =
   </span>
 
   <span className="text-4xl font-display text-primary">
-    ₹{selectedVariant.price * qty}
+   ₹{((selectedVariant.discount ?? selectedVariant.price) * qty).toLocaleString()}
   </span>
 
 </div>

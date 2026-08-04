@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import { getCategories, getTypes } from "@/api/api";
 type MenuDropdownProps = {
   mobile?: boolean;
@@ -17,7 +17,7 @@ export function MenuDropdown({
   const [activeCategory, setActiveCategory] = useState<any>(null);
 
   const menuRef = useRef<HTMLDivElement>(null);
-
+const closeTimer = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     async function loadMenu() {
       try {
@@ -57,29 +57,52 @@ export function MenuDropdown({
   }, []);
 
   return (
-    <div className="relative" ref={menuRef}>
-<button
-  onClick={() => setOpen((v) => !v)}
-  className={
-    mobile
-      ? "w-full text-left py-3 text-base"
-      : "text-sm tracking-wide hover:text-primary"
+<div
+ className="relative"
+  ref={menuRef}
+ onMouseEnter={() => {
+  if (!mobile) {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
   }
+}}
+
+onMouseLeave={() => {
+  if (!mobile) {
+    closeTimer.current = setTimeout(() => {
+      setOpen(false);
+    }, 200);
+  }
+}}
 >
-  Menu
-</button>
+  <button
+    onClick={() => mobile && setOpen((v) => !v)}
+    className={
+      mobile
+        ? "w-full flex items-center justify-between py-3 text-base"
+        : "flex items-center gap-1 text-sm tracking-wide hover:text-primary transition-colors"
+    }
+  >
+    Shop All
+
+    <ChevronDown
+      size={16}
+      className={`transition-transform duration-300 ${
+        open ? "rotate-180" : ""
+      }`}
+    />
+  </button>
 
       {open && (
 <div
   className={
     mobile
       ? "mt-2 rounded-xl border bg-white"
-      : "absolute left-0 top-full mt-3 flex w-[650px] rounded-2xl border bg-white shadow-xl z-50 overflow-hidden"
-  }
+: "absolute left-0 top-full flex w-[560px] rounded-3xl border border-gray-100 bg-white shadow-2xl z-50 overflow-hidden"  }
 >
           {/* Categories */}
 
-          <div className="w-64 border-r bg-gray-50">
+          <div className="w-64 border-r bg-gray-50 p-3">
             {categories.map((category) => (
               <button
                 key={category._id}
@@ -89,10 +112,9 @@ export function MenuDropdown({
 onClick={() => {
   if (mobile) setActiveCategory(category);
 }}
-                className={`flex w-full items-center justify-between px-5 py-3 text-left hover:bg-primary hover:text-white transition ${
-                  activeCategory?._id === category._id
-                    ? "bg-primary text-white"
-                    : ""
+className={`flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-all duration-300 ${                  activeCategory?._id === category._id
+                    ? "bg-[rgb(126,0,62)] text-white shadow"
+                  : "hover:bg-gray-100"
                 }`}
               >
                 {category.name}
@@ -104,9 +126,9 @@ onClick={() => {
 
           {/* Types */}
 
-          <div className="flex-1 p-5">
-            <h3 className="mb-4 text-lg font-semibold">
-              {activeCategory?.name}
+         <div className="w-80 p-6">
+          <h3 className="mb-5 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+             Types
             </h3>
 
             <div className="grid grid-cols-2 gap-2">
@@ -126,8 +148,7 @@ onClick={() => {
   setOpen(false);
   onNavigate?.();
 }}
-  className="rounded-lg px-3 py-2 hover:bg-primary hover:text-white transition"
->
+className="rounded-xl px-4 py-3 hover:bg-[rgb(126,0,62)] hover:text-white transition-all duration-300">
   {type.name}
 </Link>
                 ))}
@@ -135,6 +156,7 @@ onClick={() => {
           </div>
         </div>
       )}
+      
     </div>
   );
 }

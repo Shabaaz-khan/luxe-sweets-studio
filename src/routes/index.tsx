@@ -12,9 +12,10 @@ import { Reveal, RevealStagger, revealItem } from "@/components/site/Reveal";
 import { useEffect, useState } from "react";
 import { getCategories, getProducts,  getHomePage,} from "@/api/api";
 import FloatingVideo from "@/components/site/FloatingVideo";
+import CorporateSlider from "@/components/site/CorporateSlider";
 // import corporateImg from "@/assets/corporate-gift.jpg";
 // import heroPlate from "@/assets/hero-plate.jpg";
-import { Sparkles, Leaf, Award, Truck } from "lucide-react";
+import { Sparkles, Leaf, Award, Truck, Linkedin, ChevronLeft, ChevronRight} from "lucide-react";
 export const Route = createFileRoute("/")({
   component: Home,
 });
@@ -84,6 +85,53 @@ const [categories, setCategories] = useState<any[]>([]);
 const [products, setProducts] = useState<any[]>([]);
 const { addToCart } = useCart();
 const [home, setHome] = useState<any>(null);
+const [current, setCurrent] = useState(0);
+const [testimonialCurrent, setTestimonialCurrent] = useState(0);
+const [corporateCurrent, setCorporateCurrent] = useState(0);
+
+useEffect(() => {
+  if (!home?.corporate?.images?.length) return;
+
+  const timer = setInterval(() => {
+    setCorporateCurrent(
+      (prev) =>
+        (prev + 1) % home.corporate.images.length
+    );
+  }, 3000);
+
+  return () => clearInterval(timer);
+}, [home?.corporate?.images]);
+const nextTestimonial = () => {
+  if (!home?.testimonials?.length) return;
+
+  setTestimonialCurrent((prev) =>
+    prev >= home.testimonials.length - 2 ? 0 : prev + 1
+  );
+};
+
+const prevTestimonial = () => {
+  if (!home?.testimonials?.length) return;
+
+  setTestimonialCurrent((prev) =>
+    prev === 0 ? Math.max(0, home.testimonials.length - 2) : prev - 1
+  );
+};
+const nextSlide = () => {
+  if (!home?.videoTestimonials?.length) return;
+
+  setCurrent((prev) =>
+    prev === home.videoTestimonials.length - 1 ? 0 : prev + 1
+  );
+};
+
+const prevSlide = () => {
+  if (!home?.videoTestimonials?.length) return;
+
+  setCurrent((prev) =>
+    prev === 0 ? home.videoTestimonials.length - 1 : prev - 1
+  );
+};
+
 useEffect(() => {
   loadHome();
   loadCategories();
@@ -152,6 +200,11 @@ const featured = home.signature?.category
       )
       .slice(0, home.signature.limit)
   : [];
+  const visibleTestimonials =
+  home?.testimonials?.slice(
+    testimonialCurrent,
+    testimonialCurrent + 2
+  ) || [];
   return (
     <div className="min-h-screen">
       <Nav />
@@ -209,8 +262,10 @@ const featured = home.signature?.category
   className="relative overflow-hidden rounded-3xl h-[350px] shadow-soft group"
 >
     <Link
-    to="/menu"
-      search={{ category: c._id }}
+     to="/collections/$slug"
+  params={{
+    slug: c.slug,
+  }}
     className="relative block overflow-hidden rounded-3xl h-[350px] shadow-soft group"
   >
   {/* Background Image */}
@@ -267,11 +322,10 @@ const featured = home.signature?.category
               </Link>
             </div>
           </Reveal>
-
-          <RevealStagger
-            stagger={0.1}
-            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-          >
+<RevealStagger
+  stagger={0.1}
+  className="mt-12 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3"
+>
             {featured.map((p) => (
               <motion.div key={p._id} variants={revealItem}>
                <ProductCard
@@ -284,56 +338,12 @@ const featured = home.signature?.category
         </section>
 
         {/* Corporate strip */}
-        <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
-          <Reveal y={60}>
-            <div className="relative overflow-hidden rounded-3xl bg-[rgb(126,0,62)] text-primary-foreground p-8 md:p-14 grid md:grid-cols-2 gap-10 items-center shadow-luxe">
-              <div className="absolute inset-0 bg-damask opacity-30 pointer-events-none" />
-              <div className="relative">
-                <div className="text-[11px] tracking-[0.3em] uppercase text-gold-soft">
-                  {home.corporate.label}
-                </div>
-                <h2 className="mt-4 font-display text-4xl md:text-5xl leading-tight">
-                  {home.corporate.title}
-                </h2>
-                <p className="mt-5 text-primary-foreground/80 max-w-lg leading-relaxed">
-{home.corporate.description}
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <Link
-                     to={home.corporate.primaryButtonLink}
-                    className="btn-luxe inline-flex items-center gap-2 rounded-full bg-gold text-primary px-6 py-3 text-sm font-medium hover:bg-gold-soft transition-colors"
-                  >
-                    {home.corporate.primaryButtonText}
-                  </Link>
-                  <Link
-                     to={home.corporate.secondaryButtonLink}
-                    className="inline-flex items-center gap-2 rounded-full border border-gold/50 text-gold-soft px-6 py-3 text-sm hover:bg-gold/10 transition-colors"
-                  >
-                    {home.corporate.secondaryButtonText}
-                  </Link>
-                </div>
-              </div>
-              <div className="relative overflow-hidden rounded-2xl">
-                <div className="absolute inset-0 bg-gradient-gold rounded-2xl blur-2xl opacity-25" />
-                <motion.img
-                  initial={{ opacity: 0, scale: 1.1 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                  src={home.corporate.image}
-                  alt="Saatvik corporate gifting box"
-                  loading="lazy"
-                  width={1400}
-                  height={1000}
-                  className="relative rounded-2xl border border-gold/30 shadow-luxe"
-                />
-              </div>
-            </div>
-          </Reveal>
-        </section>
+<CorporateSlider
+  corporate={home.corporate}
+/>
 {/* Video Testimonials */}
 
-<section className="mx-auto max-w-7xl px-5 md:px-8 py-24">
+<section className="mx-auto max-w-7xl px-5 md:px-8 py-0">
   <SectionHeading
     eyebrow="Customer Stories"
     title="Watch Our Happy Customers"
@@ -341,73 +351,195 @@ const featured = home.signature?.category
     align="center"
   />
 
-  <div className="mt-12 grid gap-8 md:grid-cols-3">
-    {home.videoTestimonials.map((video: any) => (
-      <div key={video._id} className="rounded-2xl overflow-hidden border bg-card shadow-soft">
-<video
-  src={video.videoUrl}
-  autoPlay
-  muted
-  loop
-  playsInline
-  controls
-  className="w-full h-64 rounded-2xl object-cover"
-/>
+  <div className="relative mt-12">
+    {/* Video */}
+    <div className="overflow-hidden rounded-2xl border bg-card shadow-soft">
+      <video
+        key={home.videoTestimonials[current]._id}
+        src={home?.videoTestimonials?.[current]?.videoUrl}
+        controls
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="w-full h-[600px] object-cover"
+      />
+    </div>
 
-        <div className="p-4">
-          <h4 className="font-semibold">{video.name}</h4>
-          <p className="text-sm text-muted-foreground">
-            {video.designation}
-          </p>
-        </div>
-      </div>
-    ))}
+    {/* Previous Button */}
+<button
+  onClick={prevSlide}
+  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-black/80"
+>
+  <ChevronLeft className="h-6 w-6" />
+</button>
+
+<button
+  onClick={nextSlide}
+  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-black/80"
+>
+  <ChevronRight className="h-6 w-6" />
+</button>
+
+    {/* Dots */}
+    <div className="mt-6 flex justify-center gap-2">
+      {home.videoTestimonials.map((_: any, index: number) => (
+        <button
+          key={index}
+          onClick={() => setCurrent(index)}
+          className={`h-3 w-3 rounded-full transition-all ${
+            current === index
+              ? "bg-[rgb(126,0,62)] w-8"
+              : "bg-gray-300"
+          }`}
+        />
+      ))}
+    </div>
   </div>
 </section>
         {/* Testimonials */}
 <section className="mx-auto max-w-7xl px-5 md:px-8 pb-28">
-  <Reveal>
+  {/* <Reveal>
     <SectionHeading
       eyebrow="Kind words"
       title="Told at the counter."
       align="center"
     />
-  </Reveal>
+  </Reveal> */}
 
-  <RevealStagger
-    stagger={0.14}
-    className="mt-12 grid gap-6 md:grid-cols-3"
+<div className="relative mt-12">
+
+  <div className="grid gap-6 md:grid-cols-2">
+    {visibleTestimonials.map((t: any, i: number) => (
+<motion.blockquote
+  key={i}
+  variants={revealItem}
+  className="
+    rounded-[24px]
+    border
+    border-[#ECE7DF]
+    bg-white
+    p-8
+    shadow-[0_8px_30px_rgba(0,0,0,0.06)]
+    transition-all
+    duration-300
+    hover:-translate-y-1
+    hover:shadow-[0_18px_40px_rgba(0,0,0,0.12)]
+  "
+>
+  {/* Top */}
+
+  <div className="flex items-start gap-5">
+
+    <div className="relative shrink-0">
+
+      <img
+        src={t.image}
+        alt={t.name}
+        className="
+          h-20
+          w-20
+          rounded-full
+          object-cover
+          border-4
+          border-[#F5F2EC]
+        "
+      />
+
+ {t.linkedin && (
+  <a
+    href={t.linkedin}
+    target="_blank"
+    rel="noreferrer"
+    className="
+      absolute
+      -right-1
+      bottom-1
+      flex
+      h-7
+      w-7
+      items-center
+      justify-center
+      rounded-full
+      bg-[#0077B5]
+      text-white
+    "
   >
-    {home.testimonials.map((t: any, i: number) => (
-      <motion.blockquote
-        key={i}
-        variants={revealItem}
-        className="rounded-2xl bg-card border border-border p-8 shadow-soft"
-      >
-        {t.image && (
-          <img
-            src={t.image}
-            alt={t.name}
-            className="w-16 h-16 rounded-full object-cover mx-auto mb-4"
-          />
-        )}
+    <Linkedin size={14} fill="white" />
+  </a>
+)}
 
-        <p className="text-foreground/80 leading-relaxed">
-          "{t.review}"
-        </p>
+    </div>
 
-        <footer className="mt-6 text-center">
-          <h4 className="font-semibold">
-            {t.name}
-          </h4>
+    <div className="flex-1">
 
-          <p className="text-sm text-muted-foreground">
-            {t.designation}
-          </p>
-        </footer>
-      </motion.blockquote>
+      <h3 className="text-xl font-bold text-[#1F2937]">
+        {t.name}
+      </h3>
+
+<p className="mt-1 text-[15px] text-[#5F6368]">
+  {t.designation}
+  {t.company && `, ${t.company}`}
+</p>
+
+      {t.companyLogo && (
+        <img
+          src={t.companyLogo}
+          alt=""
+          className="mt-4 h-10 object-contain"
+        />
+      )}
+
+    </div>
+
+  </div>
+
+  {/* Quote */}
+
+  <h4
+    className="
+      mt-8
+      text-[32px]
+      leading-[1.3]
+      font-medium
+      text-[#202124]
+    "
+  >
+    {t.title}
+  </h4>
+
+  {/* Review */}
+
+  <p
+    className="
+      mt-6
+      text-[17px]
+      leading-8
+      text-[#4B5563]
+    "
+  >
+    {t.review}
+  </p>
+
+</motion.blockquote>
     ))}
-  </RevealStagger>
+  </div>
+
+<button
+  onClick={prevTestimonial}
+  className="absolute left-4 top-1/2 -translate-y-1/2 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-black/80"
+>
+  <ChevronLeft className="h-6 w-6" />
+</button>
+
+<button
+  onClick={nextTestimonial}
+  className="absolute right-4 top-1/2 -translate-y-1/2 flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-black/60 text-white shadow-lg transition-all duration-300 hover:scale-110 hover:bg-black/80"
+>
+  <ChevronRight className="h-6 w-6" />
+</button>
+
+</div>
 </section>
       </main>
       <Footer />
